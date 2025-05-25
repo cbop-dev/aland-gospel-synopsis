@@ -1,5 +1,5 @@
 import { mylog } from "./env/env.js";
-import { alandSynopsisPericopes } from "./alandSections.js";
+import { alandSynopsis } from "./alandSections.js";
 import { ntBooksDict } from "./ntbooks.js";
 //const mylog=log.mylog;
 
@@ -37,7 +37,8 @@ export function getBookAbbrev(refString){
     else
         return '';
 }
-mylog("importing gospelPars...");
+
+//mylog("importing gospelPars...");
 /**
  * 
  * @param {string} gospelRef -- the reference to a gospel verse (E.g., "Matt 3:17")
@@ -50,30 +51,47 @@ mylog("importing gospelPars...");
  *                      Aland's Synopsis Quattuor Evangeliorum, which contain the given NT text.
  */
 export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
-    mylog("getAlandPericopeNumbers("+ gospelRef+")");
+    //mylog("getAlandPericopeNumbers("+ gospelRef+")");
     const bookObj = getBookChapVerseFromRef(gospelRef);
     const bookAbbrev = getBookAbbrev(bookObj.book);
 
     
-    const found = alandSynopsisPericopes.filter((obj)=>{
+    const found = alandSynopsis.pericopes.filter((obj)=>{
        
-        //mylog("...checking alandSynopsisPericopes[" + k + "][" + bookAbbrev +"].ref")
-       // mylog(alandSynopsisPericopes[k][bookAbbrev]);
+        //mylog("...checking alandSynopsis.pericopes[" + k + "][" + bookAbbrev +"].ref")
+        //mylog(alandSynopsis.pericopes[k][bookAbbrev]);
         if (obj[bookAbbrev] && obj[bookAbbrev].ref){
             const refsMinusBook = obj[bookAbbrev].ref.split(";")
+            //mylog('refsMinusBook = ' + refsMinusBook)
             for (const theSynRef of refsMinusBook){
                 if (refIncludes(bookAbbrev+" "+theSynRef,gospelRef))
                     return true;
                 else{
-                    //mylog("..." + gospelRef +" NOT found in " +bookAbbrev+" "+theSynRef)
+              //      mylog("..." + gospelRef +" NOT found in " +bookAbbrev+" "+theSynRef)
                 }
             }
             //mylog("didn't find match for " + gospelRef)
             return false;
         }
         else {
-            //mylog("Failed basic condition for pericop" + k) 
-            return false;
+            //check "other" refs
+          //  mylog("checking 'other' for "+ gospelRef);
+            let otherArray = obj.other.ref ? obj.other.ref.split(";") : [];
+            
+            //mylog("other array = ");
+            //mylog(otherArray);
+            if (otherArray.filter((otherRef)=>refIncludes(otherRef,gospelRef)).length > 0) {
+                
+            
+             //   mylog("found 'other' ref for " +gospelRef + " in " + obj.pericope)
+                //mylog(otherArray)
+                return true;
+            }
+                
+            else {
+                //mylog("Failed to find gospel or 'other' for pericope " + gospelRef) 
+                return false;
+            }
         }
             
       
@@ -94,7 +112,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
 export function refIncludes(containingRef, includedRef) {
    // mylog("refInclues("+[containingRef,includedRef].join(',')+")...");
     let passed = true;
-    const logMsgFunc = "refIncludes('" + containingRef + ", '" + includedRef +"')";
+    const logMsgFunc = "refIncludes('" + containingRef + ", '" + includedRef + "')";
     const containingObj = getBookChapVerseFromRef(containingRef.trim().replaceAll(/\s+/g, ' '));
     const includedObj = getBookChapVerseFromRef(includedRef.trim().replaceAll(/\s+/g, ' '));
     if (containingObj.book != includedObj.book) {
@@ -104,7 +122,7 @@ export function refIncludes(containingRef, includedRef) {
     if (containingObj.chap?.includes('-')) { //chap range!
         if(containingObj.v?.includes('-')){
             //oops! bad input: to many ranges
-            mylog(logMsgFunc  + " bad input: both verse and chapter ranges");
+            //mylog(logMsgFunc  + " bad input: both verse and chapter ranges");
         }
         else {
             const allowedChaps = createNumArrayFromStringListRange(containingObj.chap);
@@ -112,7 +130,7 @@ export function refIncludes(containingRef, includedRef) {
             const includedChap = parseInt(includedObj.chap)
             if (includedChap && !allowedChaps.includes(includedChap)) {  //failed: not in range
                 passed = false;
-                mylog("refIncludes('" + containingRef + ",'" + includedRef + +"') false: included is not in container  chapter range");
+               // mylog(logMsgFunc + "-->false: included is not in container  chapter range");
             }
             else { //we passed! do nothing!
 
@@ -189,7 +207,6 @@ function createNumArrayFromStringListRange(numString){
         else{
             //bad input?; don't add anything.
         }
-
     }
     return nums.sort();
 }
@@ -233,7 +250,7 @@ function splitBookChap(string){
 function getBookChapVerseFromRef(refString){
 
 
-    refString=refString.replaceAll(/\s+/g, ' ').trim();
+    refString=cleanString(refString);
     let book = null,  chap = book, v = book;
     //NB books with only 1 chap: [Phlm, Jude,2 John, 3 John]
     let badInput = false;
@@ -264,27 +281,83 @@ function getBookChapVerseFromRef(refString){
 
 /**
  * 
+ * @param {string} string  - chapter and verse(s). E.g.,  "1:3" or "2" or even "2-3" (w/o verses)
+ * @returns {{chapter:string, verse:string}}
+ */
+function getChapVerseFromRef(string){
+    string = cleanString(string);
+    const vSplit = string.split(":");
+    const chap = vSplit.length > 0 ? vSplit[0] : null;
+    const v = vSplit.length > 0 ? (vSplit[1] ? vSplit[1] : null) : null;
+    return {chap: vSplit[0], v: v}
+
+}
+
+/**
+ * 
  * @param {string} ref1 -- chapter and verse reference, eg., "1:3" or "2" or even "2-3" (w/o verses)
  * @param {string} ref2 -- (same)
  * @returns -1 if ref1 is earlier than ref2, 1 if opposite; 0 if they're the same or they begin at same point/verse.
  */
-function sortChapVerseFunc(ref1, ref2) {
-    const bookChapV1 = getBookChapVerseFromRef(ref1);
-    const bookChapV2 = getBookChapVerseFromRef(ref2);
-
-    //todo: finish this...
-    if (bookChapV1.chap && bookChapV2.chap) {
-        const chapRange1 = createNumArrayFromStringListRange(bookChapV1.chap);
-        const chapRange2 = createNumArrayFromStringListRange(bookChapV2.chap);
+export function sortChapVerseFunc(ref1, ref2) {
+    const logMsgFunc = "sortChapVerseFunc(" +[ref1,ref2].join(',') + ")";
+    const chapV1 = getChapVerseFromRef(ref1); 
+    const chapV2 = getChapVerseFromRef(ref2);
+  //  mylog("...getChapVerseFromRef gives us: ")
+  //  mylog(chapV1);
+   // mylog(chapV2);
+    let retVal = 0;
+    
+    if (chapV1.chap && chapV2.chap) {//each has a chapter...
+        const chapRange1 = createNumArrayFromStringListRange(chapV1.chap);
+        const chapRange2 = createNumArrayFromStringListRange(chapV2.chap);
         if (chapRange1.length > 0 && chapRange2.length > 0){
-            return chapRange1[0] - chapRange2[0];
-        }
-        else{ ///what to do
+            if (chapRange1[0] == chapRange2[0]){ //same chapter, need to compare verses...
+                if (chapV1.v && chapV2.v){ //have verses...
+                    const vRange1 = createNumArrayFromStringListRange(chapV1.v);
+                    const vRange2 = createNumArrayFromStringListRange(chapV2.v);
+                    if (vRange1.length > 0 && vRange2.length > 0){
+                        retVal = vRange1[0] - vRange2[0];
+                       // mylog(logMsgFunc + ": compared vv [" + [vRange1[0],vRange1[1]].join(',') + "], returning: " + retVal);
+                    }
+                    else{ //only one with a verse? start with whole chapter. bad input?? keep same order for now.
+                       // mylog(logMsgFunc+": got chaps, and vv, but keeping same order of " +[ref1,ref2].join(","));
+                    }
+                }
+                else{ //only 1 with vv. put whole chapter first:
+                    if (!chapV1.v) {
+                        retVal = -1;
+                      //  mylog(logMsgFunc+": only one with vv, returning -1")
 
+                    }
+                    else{
+                        retVal = 1;//second has chapter, put it first
+                      //  mylog(logMsgFunc+": only one with vv, returning 1")
+                    }
+                }
+            }
+            else{ //different chaps, lets compare them alone:
+                retVal = chapRange1[0] - chapRange2[0]
+               // mylog(logMsgFunc+": diff chaps, returning  one with vv, returning "+retVal);
+            }
         }
+        else{ //have, at most, only one ref with a chapter
+
+            if (!chapV1.chap)
+                retVal = -1;
+            else
+                retVal = 1;
+        }
+
     }
-
-
+    else{ //at most only one ref has chapters!@
+        if (!chapV1.chap)
+            retVal = -1;
+        else 
+            retVal = 1;
+    }
+   // mylog(logMsgFunc + ": returning " +  retVal)
+    return retVal;
 
 }
 export const testing = {

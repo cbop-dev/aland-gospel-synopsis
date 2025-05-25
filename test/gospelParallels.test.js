@@ -1,7 +1,7 @@
 import * as gPar from "../src/gospelParallels.js";
 import { mylog } from "../src/env/env.js";
 import { expect, test } from 'vitest';
-
+import { alandSynopsis } from "../src/alandSections.js";
 test('dummy', async () => {
 	
 	expect(true).toBe(true);
@@ -27,6 +27,7 @@ test('refIncludes tests', async () => {
         {container: "Matt 16:1-2a,4", contained: "Matt 16:3", result:false},
         {container: "Matt 16:1-2a,4", contained: "Matt 16:2", result:true},
         {container: "Matt 16:1-2a,4", contained: "Matt 16:4", result:true},
+        {container: "1 Peter 4:14", contained: "1 Peter 4:14", result:true},
 
        
 
@@ -125,13 +126,16 @@ test('getAlandPericopeNumbers', async () => {
 	const alandLookUps =[
         {ref: "Matt 28:17", alands: [359,364]},
         {ref: "Matt 13:12", alands: [123,125]},
-        
+        {ref: "Matt 14:14", alands: [146]},
+        {ref: "Mark 6:30", alands: [145]},
+        {ref: "1 Pet 4:14", alands: [51,78]},
+        {ref: "Acts 1:13b", alands: [49,99,365]},
     ]
 	
     for (const lookups of alandLookUps){
         const foundAlandSects = gPar.getAlandPericopeNumbers(lookups.ref);
-        mylog("foundalandSects=");
-        mylog(foundAlandSects);
+        //mylog("foundalandSects=");
+        //mylog(foundAlandSects);
         expect(foundAlandSects.length).toEqual(lookups.alands.length);
         
         let found = 0;
@@ -156,7 +160,6 @@ test('createNumArrayFromStringListRange', async () => {
         {string: "2-4a,1", array:[1,2,3,4]},
         {string: "2-4e,1", array:[1,2,3,4]},
         
-
     ]
     for (const numObj of numLists) {
         expect(gPar.testing.createNumArrayFromStringListRange(numObj.string)).toEqual(numObj.array);
@@ -164,3 +167,29 @@ test('createNumArrayFromStringListRange', async () => {
 	expect(true).toBe(true);
 	//await expect(page.locator('h1')).toBeVisible();
 });
+
+test('sortChapVerseFunc', async () => {
+	const chapVerses = [
+        {refs: ["1:3", "1:2"], sorted: ["1:2", "1:3"]},
+        {refs: ["12:3", "13:2", "13:1","6:1"], sorted: ["6:1", "12:3",  "13:1", "13:2"]}
+
+    ];
+    for (const test of chapVerses){
+        const sortedRefs = test.refs.toSorted(gPar.sortChapVerseFunc);
+        //mylog("sorted Refs ("+test.refs.join(',')+") -> ("+sortedRefs.join(',')+")");
+        for (const i in test.sorted){
+            expect(test.sorted[i]).toEqual(sortedRefs[i]);
+        }
+        
+    }
+	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
+test('getAlandSections', async () => {
+	
+	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
+
