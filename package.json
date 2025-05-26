@@ -9,9 +9,9 @@
     "synopsis",
     "synopsis-quottuor-evangeliorum",
     "kurt",
-    "aland",
-    "kurt",
-    "aland"
+    "kurt aland",
+    "bible"
+    
   ],
   "repository": {
     "type": "git",
