@@ -109,8 +109,8 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
  * @param {string} includedRef --  a reference to a book, chapter, or verse. NOT a range!(?) todo: allow for includedrange!
  * @returns {boolean} true if the includedRef is contained in the containerRef
  */
-export function refIncludes(containingRef, includedRef) {
-   // mylog("refInclues("+[containingRef,includedRef].join(',')+")...");
+function refIncludes(containingRef, includedRef) {
+    mylog("refInclues("+[containingRef,includedRef].join(',')+")...");
     let passed = true;
     const logMsgFunc = "refIncludes('" + containingRef + ", '" + includedRef + "')";
     const containingObj = getBookChapVerseFromRef(containingRef.trim().replaceAll(/\s+/g, ' '));
@@ -299,7 +299,7 @@ function getChapVerseFromRef(string){
  * @param {string} ref2 -- (same)
  * @returns -1 if ref1 is earlier than ref2, 1 if opposite; 0 if they're the same or they begin at same point/verse.
  */
-export function sortChapVerseFunc(ref1, ref2) {
+function sortChapVerseFunc(ref1, ref2) {
     const logMsgFunc = "sortChapVerseFunc(" +[ref1,ref2].join(',') + ")";
     const chapV1 = getChapVerseFromRef(ref1); 
     const chapV2 = getChapVerseFromRef(ref2);
@@ -360,6 +360,61 @@ export function sortChapVerseFunc(ref1, ref2) {
     return retVal;
 
 }
-export const testing = {
-    getBookChapVerseFromRef, createNumArrayFromStringListRange, cleanNumString, splitBookChap
+
+/**
+ * 
+ * @param {number} alandPericopeNum 
+ * @param {boolean} ignoreOthers - if true (default), we'll exclude any non-gospel NT parallels from return value. If false, other non-gospel NT parallels will be included.
+ * @returns {string[]} -- array of strings, each of which is an NT/gospels reference
+ */
+export function getAlandPericopeRefs(alandPericopeNum, ignoreOthers=true){
+
+    const pericope = alandSynopsis.pericopes.find((obj)=>obj.pericope == alandPericopeNum);
+    const refs = [];
+    if (pericope) {
+        for (const gospelAbbrev of ["Matt","Mark","Luke","John"]) {
+            if (pericope[gospelAbbrev].ref){
+                pericope[gospelAbbrev].ref.split(";").forEach((theRef)=>{
+                    refs.push(gospelAbbrev.trim()+" "+theRef.trim());
+
+                })
+            }
+        }
+        
+        if (!ignoreOthers){
+            if(pericope.other.ref){
+                pericope.other.ref.split(";").forEach((theRef)=>{
+                    refs.push(theRef.trim());
+                })
+            }
+        }
+    }
+    else {
+        mylog("getAlandPericopeRefs("+alandPericopeNum+") found NO RESULTS!")
+    }
+    
+    return refs;
+
 }
+
+/**
+ * 
+ * @param {string} refString  -- a reference to a NT single verse, e.g., "1 Cor 2:11"
+ * @returns {number[]} An array of numbers, each of which is a section (1-18) in  Aland's Synopsis where the verse appears, if at all. 
+ * If the verse appears in no such section, returns an empty array.
+ */
+export function getAlandSection(refString){
+    mylog("getAlandSection("+refString+")");
+    refString = cleanString(refString);
+    const found = alandSynopsis.sections.filter(
+        (sec)=>sec.refs.split(';').find(
+                (secRef)=>secRef ? refIncludes(secRef,refString) : false));
+    if (found)
+        return found.map((sec)=>sec.section).sort();
+    else return [];
+}
+export const testing = {
+    getBookChapVerseFromRef, createNumArrayFromStringListRange, cleanNumString, splitBookChap,sortChapVerseFunc, refIncludes
+}
+
+export const utils = testing

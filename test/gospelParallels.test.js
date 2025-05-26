@@ -1,4 +1,4 @@
-import * as gPar from "../src/gospelParallels.js";
+import * as gPar from "../src/index.js";
 import { mylog } from "../src/env/env.js";
 import { expect, test } from 'vitest';
 import { alandSynopsis } from "../src/alandSections.js";
@@ -35,7 +35,7 @@ test('refIncludes tests', async () => {
 
     ]
 	for (const refPair of inRefs){
-       expect(gPar.refIncludes(refPair.container, refPair.contained)).toBe(refPair.result)
+       expect(gPar.utils.refIncludes(refPair.container, refPair.contained)).toBe(refPair.result)
     }
 	//await expect(page.locator('h1')).toBeVisible();
 })
@@ -175,7 +175,7 @@ test('sortChapVerseFunc', async () => {
 
     ];
     for (const test of chapVerses){
-        const sortedRefs = test.refs.toSorted(gPar.sortChapVerseFunc);
+        const sortedRefs = test.refs.toSorted(gPar.testing.sortChapVerseFunc);
         //mylog("sorted Refs ("+test.refs.join(',')+") -> ("+sortedRefs.join(',')+")");
         for (const i in test.sorted){
             expect(test.sorted[i]).toEqual(sortedRefs[i]);
@@ -186,9 +186,41 @@ test('sortChapVerseFunc', async () => {
 	//await expect(page.locator('h1')).toBeVisible();
 });
 
-test('getAlandSections', async () => {
-	
+test('getAlandSection', async () => {
+	const sectionTests = [
+        {ref: "Matt 3:15", secs: [3]},
+        {ref: "Matt 28:17", secs: [17,18]},
+        {ref: "Rom 2:3", secs: [6,7]},
+    ]
+    for (const t of sectionTests){
+        expect(gPar.getAlandSection(t.ref)).toEqual(t.secs);
+    }
 	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
+
+test('getAlandPericopeRefs', async () => {
+	const tests = [
+        //{per: 16, refs: ["Matt 3:11-12", "Mark 1:7-8", "Luke 3:15-18", "John 1:24-28"]},
+        {per: 16, refs: ["Matt 3:11-12", "Mark 1:7-8", "Luke 3:15-18", "John 1:24-28", "Acts 13:24-25"]},
+        {per: 255, refs: ["Matt 19:23-30","Mark 10:23-31","Luke 18:24-30","Luke 22:28-30"]},
+
+
+    ]
+	
+    for (const test of tests){
+        //mylog("test getAlandPericopeRefs: about to call with pericope input:" + test.per);
+        const foundRefs = gPar.getAlandPericopeRefs(test.per,false);
+       // mylog("found Refs:")
+        //mylog(foundRefs);
+        expect(foundRefs.length).toEqual(test.refs.length);
+        for (const ref of test.refs){
+        //    mylog("test getAlandPericopeRefs: checking for test ref '" + ref +"' to be in: [" + foundRefs.join(',')+"]:")
+            expect(foundRefs.includes(ref)).toBe(true);
+        }
+    }
+    //expect(true).toBe(true);
 	//await expect(page.locator('h1')).toBeVisible();
 });
 
