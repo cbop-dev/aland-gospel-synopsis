@@ -1,13 +1,13 @@
 {
   "name": "@cbop-dev/aland-gospel-synopsis",
-  "version": "0.0.1",
+  "version": "0.0.1b",
   "description": "ES Javascript module for looking up parallel texts from the NT gospels, based on Aland's 'Quattuor Synopsis Evangeliorum'",
   "keywords": [
     "gospels",
     "nt",
     "greek",
     "synopsis",
-    "synopsis-quottuor-evangeliorum",
+    "synopsis-quattuor-evangeliorum",
     "kurt",
     "kurt aland",
     "bible"
@@ -15,12 +15,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "/home/cbrannan/dev/2-tmp/../0-repos/cb/bible-tools/aland-gospel-synopsis.git/"
+    "url": "https://github.com/cbop-dev/aland-gospel-synopsis.git"
   },
   "license": "ISC",
   "author": "Fr. Christopher Brannan, OP",
   "type": "module",
-  "main": "index.js",
+  "main": "./index.js",
+  "exports": "./index.js",
   "scripts": {
     "test": "vitest"
   },
