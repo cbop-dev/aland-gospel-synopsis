@@ -10,11 +10,10 @@ export const gospels = {
     JOHN: 3,
     NONE: 4
 }
-
 /**
  * 
  * @param {string} refString -- a NT book name of some sort
- * @returns {number|null} - the TF node id of the book, if a matching one is found! null otherwise.
+ * @returns {number|null} - the TF node id of the book, if a matching one is found! 0 otherwise.
  */
 export function getBookID(refString) {
     refString = refString.replaceAll(/\s+/g,' ').trim();
@@ -22,7 +21,7 @@ export function getBookID(refString) {
     if (found)
         return parseInt(found);
     else 
-        return null;
+        return 0;
 }
 
 /**
@@ -247,7 +246,7 @@ function splitBookChap(string){
 
 //TODO: finish....incomplete state!
 // simplify: just separate book, chap, and vv portions of strings; prob don't need to handle ranges? (use sep function)
-function getBookChapVerseFromRef(refString){
+export function getBookChapVerseFromRef(refString){
 
 
     refString=cleanString(refString);
@@ -413,6 +412,30 @@ export function getAlandSection(refString){
         return found.map((sec)=>sec.section).sort();
     else return [];
 }
+
+/**
+ * 
+ * @param {number} node 
+ * @returns {string}
+ */
+export function getBookName(node){
+    //console.log("=========================================================");
+    //mylog("HERE WE ARE!!========")
+   // mylog("=========================================================");
+    if (!ntBooksDict[String(node)]){
+     //   mylog("did not find " + node + " in ntBooksDict");
+    }
+    const name =  ntBooksDict[node] ? ntBooksDict[node].name : ''
+    //mylog("getBookName("+node+")-->'" + name+"'");
+    return name;
+}
+
+export {ntBooksDict, alandSynopsis}
+
+/*export default {
+    getBookName, getAlandSection, getAlandPericopeRefs, getBookChapVerseFromRef, getBookID, getBookAbbrev, getAlandPericopeNumbers, ntBooksDict, alandSynopsis
+}*/
+
 export const testing = {
     getBookChapVerseFromRef, createNumArrayFromStringListRange, cleanNumString, splitBookChap,sortChapVerseFunc, refIncludes
 }

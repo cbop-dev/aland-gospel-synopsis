@@ -1,4 +1,4 @@
-import * as gPar from "../src/index.js";
+import * as gPar from '../src/gospelParallels.js';
 import { mylog } from "../src/env/env.js";
 import { expect, test } from 'vitest';
 import { alandSynopsis } from "../src/alandSections.js";
@@ -224,4 +224,14 @@ test('getAlandPericopeRefs', async () => {
 	//await expect(page.locator('h1')).toBeVisible();
 });
 
+test('getBookName', async () => {
+	const tests = [
+        {lookup: 137780, name: "Matthew"}
+    ]
+    for (const t of tests){
+        expect(gPar.getBookName(t.lookup)).toEqual(t.name);
+    }
+	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
 
