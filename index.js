@@ -1,4 +1,4 @@
 import * as alandSynopsis from "./src/gospelParallels.js";
 
-//getAlandPericopeNumbers
-module.exports = alandSynopsis;
+export default module.exports = alandSynopsis
+    
