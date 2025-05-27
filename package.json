@@ -21,7 +21,10 @@
   "author": "Fr. Christopher Brannan, OP",
   "type": "module",
   "main": "./index.js",
-  "exports": "./index.js",
+  "exports": {
+    "require": "./index.js",
+    "import":  "./index.js"
+  },
   "scripts": {
     "test": "vitest"
   },
