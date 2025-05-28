@@ -87,6 +87,7 @@ test('getBookAbbrev', async () => {
         {ref: "1 Cor", abbrev: "1 Cor"},
         {ref: "II Corinthians", abbrev: "2 Cor"},
         {ref: "Matthew", abbrev: "Matt"},
+        {ref: "Mt", abbrev: "Matt"},
         {ref: "Hebr", abbrev: "Heb"},
         
 
@@ -94,6 +95,27 @@ test('getBookAbbrev', async () => {
 
     for (const b of books){
         expect(gPar.getBookAbbrev(b.ref)).toEqual(b.abbrev);
+    }
+    //expect(true).toBe(false);
+
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
+
+test('getBookNameBySyn', async () => {
+	const books=[
+        {ref: "1 Cor", name: "I_Corinthians"},
+        {ref: "II Corinthians", name: "II_Corinthians"},
+        {ref: "Matthew", name: "Matthew"},
+        {ref: "Mt", name: "Matthew"},
+        {ref: "mt", name: "Matthew"},
+        {ref: "Hebr", name: "Hebrews"},
+        
+
+    ];
+
+    for (const b of books){
+        expect(gPar.getBookNameBySyn(b.ref)).toEqual(b.name);
     }
     //expect(true).toBe(false);
 
@@ -125,11 +147,13 @@ test('splitBookChap', async () => {
 test('getAlandPericopeNumbers', async () => {
 	const alandLookUps =[
         {ref: "Matt 28:17", alands: [359,364]},
+        //{ref: "Mt 28:17", alands: [359,364]},
         {ref: "Matt 13:12", alands: [123,125]},
         {ref: "Matt 14:14", alands: [146]},
         {ref: "Mark 6:30", alands: [145]},
         {ref: "1 Pet 4:14", alands: [51,78]},
         {ref: "Acts 1:13b", alands: [49,99,365]},
+
     ]
 	
     for (const lookups of alandLookUps){

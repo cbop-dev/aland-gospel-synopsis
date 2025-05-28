@@ -10,6 +10,7 @@ export const gospels = {
     JOHN: 3,
     NONE: 4
 }
+
 /**
  * 
  * @param {string} refString -- a NT book name of some sort
@@ -17,7 +18,7 @@ export const gospels = {
  */
 export function getBookID(refString) {
     refString = refString.replaceAll(/\s+/g,' ').trim();
-    const found = Object.keys(ntBooksDict).find((k)=>ntBooksDict[k].syn.includes(refString));
+    const found = Object.keys(ntBooksDict).find((k)=>ntBooksDict[k].syn.map((s)=>s.toLowerCase()).includes(refString.toLowerCase()));
     if (found)
         return parseInt(found);
     else 
@@ -52,7 +53,10 @@ export function getBookAbbrev(refString){
 export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
     //mylog("getAlandPericopeNumbers("+ gospelRef+")");
     const bookObj = getBookChapVerseFromRef(gospelRef);
+    //const bookAbbrev = getBookNameBySyn(bookObj.book);
+    
     const bookAbbrev = getBookAbbrev(bookObj.book);
+    mylog("trying to get bookabbrev from " + bookObj.book + ", and got: " + bookAbbrev);
 
     
     const found = alandSynopsis.pericopes.filter((obj)=>{
@@ -63,13 +67,14 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
             const refsMinusBook = obj[bookAbbrev].ref.split(";")
             //mylog('refsMinusBook = ' + refsMinusBook)
             for (const theSynRef of refsMinusBook){
-                if (refIncludes(bookAbbrev+" "+theSynRef,gospelRef))
+                if (refIncludes(bookAbbrev+" "+theSynRef,bookAbbrev + " " +bookObj.chap + (bookObj.v ? ":" +bookObj.v : '')))
                     return true;
                 else{
               //      mylog("..." + gospelRef +" NOT found in " +bookAbbrev+" "+theSynRef)
+              //      return false;
                 }
             }
-            //mylog("didn't find match for " + gospelRef)
+         //   mylog("didn't find match for " + gospelRef)
             return false;
         }
         else {
@@ -88,7 +93,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
             }
                 
             else {
-                //mylog("Failed to find gospel or 'other' for pericope " + gospelRef) 
+                mylog("Failed to find gospel or 'other' for pericope " + gospelRef) 
                 return false;
             }
         }
@@ -96,6 +101,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
       
  
     }).map((o)=>o.pericope);
+    mylog("AlandNumbers found: " + found.join(','));
     return found ? found : [];
 }
 
@@ -109,7 +115,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE){
  * @returns {boolean} true if the includedRef is contained in the containerRef
  */
 function refIncludes(containingRef, includedRef) {
-    mylog("refInclues("+[containingRef,includedRef].join(',')+")...");
+    //mylog("refIncludes("+[containingRef,includedRef].join(',')+")...");
     let passed = true;
     const logMsgFunc = "refIncludes('" + containingRef + ", '" + includedRef + "')";
     const containingObj = getBookChapVerseFromRef(containingRef.trim().replaceAll(/\s+/g, ' '));
@@ -178,7 +184,7 @@ function cleanNumString(numString){
  * @param {string} numString - a list of integers or integer ranges, separated by commas. Eg., "1,2,4-7", "3", "3-6,4", etc.
  * @returns {number[]} - an array of all the numbers in the given list, e.g., "1,2,4-7" --> [1,2,4,5,6,7], etc.
  */
-function createNumArrayFromStringListRange(numString){
+export function createNumArrayFromStringListRange(numString){
     numString=cleanNumString(numString);
     const nums=[];
     const sepGroups = cleanNumString(numString).split(',');
@@ -223,7 +229,7 @@ function splitBookChap(string){
         theBook = matches[1];
         theChap = matches[4] ? matches[4] : null;
     }
-    else if(matches[1]){//just a book
+    else if(matches && matches[1]){//just a book
         theBook=matches[1];
       
     }
@@ -244,8 +250,6 @@ function splitBookChap(string){
  * @returns {{book:string|null, chap:string|null, v:string|null}}
  */
 
-//TODO: finish....incomplete state!
-// simplify: just separate book, chap, and vv portions of strings; prob don't need to handle ranges? (use sep function)
 export function getBookChapVerseFromRef(refString){
 
 
@@ -411,6 +415,10 @@ export function getAlandSection(refString){
     if (found)
         return found.map((sec)=>sec.section).sort();
     else return [];
+}
+
+export function getBookNameBySyn(syn){
+    return getBookName(getBookID(syn));
 }
 
 /**

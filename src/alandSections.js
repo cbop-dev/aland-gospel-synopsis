@@ -388,5 +388,28 @@ sections: [
 {section: 16 , title: "The Passion Narrative", pericopes: "305-351", refs: "Matt 10:24,40; Matt 19:28; Matt 20:24-28; Matt 26:1-75; Matt 27:1-66; Mark 10:41-45; Mark 14:1-72; Mark 15:1-47; Luke 6:4; Luke 7:36-50; Luke 22:1-71; Luke 23:1-56; John 12:1-8,27; John 13:1-38; John 14:1-31; John 15:1-27; John 16:1-33; John 17:1-26; John 18:1-40; John 19:1-42; Acts 1:15-20; Acts 3:13-14; Acts 4:27-28; Acts 6:14; Acts 7:59-60; Acts 13:27-29; 1 Cor 5:7; 1 Cor 10:16-17; 1 Cor 11:23-26; Heb 5:7; 1 John 2:1-2; 1 John 5:6-8; Rev 1:7; Rev 13:10"},
 {section: 17 , title: "The Resurrection", pericopes: "352-361", refs: "Matt 28:1-20; Mark 16:1-18; Luke 24:1-43; John 20:1-29; John 21:1-14; Acts 10:41; Acts 13:31; 1 Cor 15:3-8"},
 {section: 18 , title: "The Endings of the Gospels", pericopes: "362-367", refs: "Matt 28:16-20; Mark 16:9-20; Luke 24:44-53; John 20:30-31; John 21:1-25; Acts 1:4-14"},
-]
+],
+
+/**
+ * 
+ * @param {number} num 
+ * @returns @type {{pericope: number, title: string, 
+     *  Matt: { ref: string,  primary: boolean }, 
+     *  Mark: { ref: string , primary: boolean },
+     *  Luke: { ref:  string , primary: boolean }, 
+     *  John: { ref:string , primary: boolean }, 
+     *  other: { ref:string }}} 
+ */
+lookupPericope(num){
+    return this.pericopes.find((p)=>parseInt(p.pericope)==parseInt(num));
+},
+
+/**
+ * 
+ * @param {number} num  
+ * @returns {{section: number, title: string, pericopes: string, refs: string}}
+ */
+lookupSection(num){
+     return this.sections.find((s)=>s.section==num);    
+}
 };
