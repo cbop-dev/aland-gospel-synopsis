@@ -1,3 +1,10 @@
+export const gospels = {
+    MATTHEW: 0,
+    MARK: 1,
+    LUKE: 2,
+    JOHN: 3,
+    NONE: 4
+}
 export const alandSynopsis = {
 pericopes: [
 {pericope: 1 , title: "Prologue" , Matt: { ref: "1:1" , primary: true }, Mark: { ref: "1:1" , primary: true }, Luke: { ref: "1:1-4" , primary: true }, John: { ref: "1:1-18" , primary: true }, other: { ref: "Acts 1:1-2" }},
@@ -404,6 +411,7 @@ lookupPericope(num){
     return this.pericopes.find((p)=>parseInt(p.pericope)==parseInt(num));
 },
 
+
 /**
  * 
  * @param {number} num  
@@ -411,5 +419,31 @@ lookupPericope(num){
  */
 lookupSection(num){
      return this.sections.find((s)=>s.section==num);    
+},
+
+isPrimaryPericope(pericopeNum, primaryGospel=gospels.NONE){
+    const per = this.lookupPericope(pericopeNum);
+    let isPrimary=true;
+    if (per) {
+        if (
+            (primaryGospel==gospels.MATTHEW && !per.Matt.primary) ||
+            (primaryGospel==gospels.MARK && !per.Mark.primary) ||
+            (primaryGospel==gospels.LUKE && !per.Luke.primary) ||
+            (primaryGospel==gospels.JOHN && !per.John.primary)){
+                
+                isPrimary=false;
+        }
+        else {
+            //do nada: probably passes...?
+        }
+            
+
+    }
+    else {
+        isPrimary=false;
+    }
+    return isPrimary;
+
 }
+
 };

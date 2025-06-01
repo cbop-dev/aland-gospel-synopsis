@@ -1,16 +1,10 @@
 import { mylog } from "./lib/env/env.js";
-import { alandSynopsis } from "./alandSections.js";
+import { alandSynopsis, gospels } from "./alandSections.js";
 import { ntBooksDict } from "./ntbooks.js";
 import bibleRefUtils from "./lib/utils/bibleRefUtils.js";
 //const mylog=log.mylog;
 
-export const gospels = {
-    MATTHEW: 0,
-    MARK: 1,
-    LUKE: 2,
-    JOHN: 3,
-    NONE: 4
-}
+
 
 /**
  * 
@@ -253,6 +247,7 @@ export function getBookNameBySyn(syn){
     mylog("getBookNameBySyn("+syn+")->id:"+id+", name:" +name)
     return name;
 }
+//move to alandSynopsis object!
 
 /**
  * 
@@ -271,7 +266,7 @@ export function getBookName(node){
     return name;
 }
 
-export {ntBooksDict, alandSynopsis}
+export {ntBooksDict, alandSynopsis, gospels}
 
 /*export default {
     getBookName, getAlandSection, getAlandPericopeRefs, getBookChapVerseFromRef, getBookID, getBookAbbrev, getAlandPericopeNumbers, ntBooksDict, alandSynopsis

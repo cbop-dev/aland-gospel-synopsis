@@ -198,77 +198,6 @@ export function getChapVerseFromRef(string){
 }
 
 
-//TODO delete and/or test this. A better/tested on is further below!
-/**
- * 
- * @param {string} ref1 -- chapter and verse reference, eg., "1:3" or "2" or even "2-3" (w/o verses)
- * @param {string} ref2 -- (same)
- * @returns -1 if ref1 is earlier than ref2, 1 if opposite; 0 if they're the same or they begin at same point/verse.
- */
-export function sortChapVerseFunc(ref1, ref2) {
-    const logMsgFunc = "sortChapVerseFunc(" +[ref1,ref2].join(',') + ")";
-    const chapV1 = getChapVerseFromRef(ref1); 
-    const chapV2 = getChapVerseFromRef(ref2);
-  //  mylog("...getChapVerseFromRef gives us: ")
-  //  mylog(chapV1);
-   // mylog(chapV2);
-    let retVal = 0;
-    
-    if (chapV1.chap && chapV2.chap) {//each has a chapter...
-        const chapRange1 = createNumArrayFromStringListRange(chapV1.chap);
-        const chapRange2 = createNumArrayFromStringListRange(chapV2.chap);
-        if (chapRange1.length > 0 && chapRange2.length > 0){
-            if (chapRange1[0] == chapRange2[0]){ //same chapter, need to compare verses...
-                if (chapV1.v && chapV2.v){ //have verses...
-                    const vRange1 = createNumArrayFromStringListRange(chapV1.v);
-                    const vRange2 = createNumArrayFromStringListRange(chapV2.v);
-                    if (vRange1.length > 0 && vRange2.length > 0){
-                        retVal = vRange1[0] - vRange2[0];
-                       // mylog(logMsgFunc + ": compared vv [" + [vRange1[0],vRange1[1]].join(',') + "], returning: " + retVal);
-                    }
-                    else{ //only one with a verse? start with whole chapter. bad input?? keep same order for now.
-                       // mylog(logMsgFunc+": got chaps, and vv, but keeping same order of " +[ref1,ref2].join(","));
-                    }
-                }
-                else{ //only 1 with vv. put whole chapter first:
-                    if (!chapV1.v) {
-                        retVal = -1;
-                      //  mylog(logMsgFunc+": only one with vv, returning -1")
-
-                    }
-                    else{
-                        retVal = 1;//second has chapter, put it first
-                      //  mylog(logMsgFunc+": only one with vv, returning 1")
-                    }
-                }
-            }
-            else{ //different chaps, lets compare them alone:
-                retVal = chapRange1[0] - chapRange2[0]
-               // mylog(logMsgFunc+": diff chaps, returning  one with vv, returning "+retVal);
-            }
-        }
-        else{ //have, at most, only one ref with a chapter
-
-            if (!chapV1.chap)
-                retVal = -1;
-            else
-                retVal = 1;
-        }
-
-    }
-    else{ //at most only one ref has chapters!@
-        if (!chapV1.chap)
-            retVal = -1;
-        else 
-            retVal = 1;
-    }
-   // mylog(logMsgFunc + ": returning " +  retVal)
-    return retVal;
-
-
-
-}
-
 /**
  * 
  * @param {string} refString -- biblical references, with diffrerent chapters or books separated by semi-colons. 
@@ -481,7 +410,6 @@ export default {
     splitBookChap,
     getBookChapVerseFromRef,
     getChapVerseFromRef,
-    sortChapVerseFunc,
     expandRefs,
     combineRefs,
     joinInRanges,

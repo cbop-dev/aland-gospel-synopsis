@@ -180,3 +180,24 @@ test('sortAlandPericopes test', async () => {
         expect(t.input).toEqual(t.output);
     }
 });
+
+
+test('sortAlandPericopes test', async () => {
+	const tests =[
+     //   {ref: "Matt 28:17", sort=gPar.gospels.MATTHEWalands: [359,364]},
+        //{ref: "Mt 28:17", alands: [359,364]},
+       // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
+        {input:[4,6], output: [4],
+            primary: gPar.gospels.LUKE}
+        
+
+    ]
+	
+    for (const t of tests){
+        
+        //const output = t.input.toSorted((a,b)=>gPar.sortByPrimaryFunc(a,b,t.primary));
+        const output = t.input.filter((n)=>gPar.alandSynopsis.isPrimaryPericope(n,t.primary));
+        expect(output.length).toEqual(t.output.length)
+        expect(output).toEqual(t.output);
+    }
+});
