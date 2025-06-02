@@ -398,7 +398,7 @@ export function sortChapVerseRefs(cv1, cv2){
     else // no real difference between em!
         retVal = 0;
    // mylog("sortChaVerseRef("+cv1+","+cv2+")=" +retVal+")");
-   mylog(logMsg+" --> " + retVal);
+   //mylog(logMsg+" --> " + retVal);
     return retVal;
 }
 

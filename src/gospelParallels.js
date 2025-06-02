@@ -88,7 +88,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, h
             }
                 
             else {
-                mylog("Failed to find gospel or 'other' for pericope " + gospelRef) 
+               // mylog("Failed to find gospel or 'other' for pericope " + gospelRef) 
                 return false;
             }
         }
@@ -116,6 +116,14 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, h
 }
 
 //NB: in place!
+
+/**
+ * @description Sorts, in place, an array of Aland pericope numbers according to the arrangement of the selected.
+ * For pericopes which lack a text from the given gospel, these are placed at the end of the list
+ * @param {number[]} alandArray -- array of pericope numbers, using the numbering system of Aland. 
+ * @param {number} primaryGospel -- one of the enum values in `gospels` enum in the alandSynopsis.js module.
+ * @returns 
+ */
 export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
     return alandArray.sort((a,b)=>
         sortByPrimaryFunc(alandSynopsis.lookupPericope(a),
@@ -123,6 +131,10 @@ export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
                         primaryGospel));
 }
 
+//not in place!
+export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE){
+    return sortAlandPericopes([...alandArray],primaryGospel).filter((p)=>alandSynopsis.isPrimaryPericope(p,primaryGospel));
+}
 /**
  * 
  * @param {{pericope: number, title: string, 
@@ -147,41 +159,75 @@ export function sortByPrimaryFunc(a,b, primaryGospel=gospels.NONE){
      //mylog(logMsg);
         if (primaryGospel==gospels.MATTHEW){
             if (a.Matt && a.Matt.ref && b.Matt && b.Matt.ref ) {
-                retVal = bibleRefUtils.sortChapVerseRefs(a.Matt.ref.split(";")[0], b.Matt.ref.split(";")[0]);
+                retVal = bibleRefUtils.sortChapVerseRefs(a.Matt.ref.split(";")[0], 
+                b.Matt.ref.split(";")[0]);
                 
             }
+            else {
+                if (!b.Matt || ! b.Matt.ref){
+                    retVal = 0; //a, but no b; leave the same
+                }
+                else {
+                    retVal = 1; // b, but no a. reverse.
+                }
+            }
+
+             logMsg += ("[Matt " + a.Mark.ref+"], [Matt "+b.Mark.ref+"])");
         }
         else if (primaryGospel==gospels.MARK) {
-            if (a.Mark && a.Mark.ref && b.Mark && b.Mark.ref)
-                retVal = bibleRefUtils.sortChapVerseRefs(a.Mark.ref.split(";")[0], b.Mark.ref.split(";")[0]);
+            if (a.Mark && a.Mark.ref && b.Mark && b.Mark.ref){
+                retVal = bibleRefUtils.sortChapVerseRefs(a.Mark.ref.split(";")[0], 
+                b.Mark.ref.split(";")[0]);
+            }
+            else {
+                if (!b.Mark || ! b.Mark.ref){
+                    retVal = 0; //no b, maybe a; leave the same
+                }
+                else {
+                    retVal = 1; // b, but no a. reverse.
+                }
+            }
+            logMsg += ("[Mk " + a.Mark.ref+"], [Mark "+b.Mark.ref+"])");
+            mylog(logMsg+"-->"+ retVal);
         }
         else if (primaryGospel==gospels.LUKE){
             if (a.Luke && a.Luke.ref && b.Luke && b.Luke.ref){
                 retVal = bibleRefUtils.sortChapVerseRefs(a.Luke.ref.split(";")[0], b.Luke.ref.split(";")[0]);
                 
-                logMsg+=[a.Luke.ref,b.Luke.ref].join(",") + ")";
+                logMsg+="Luke ("+[a.Luke.ref,b.Luke.ref].join(",") + ")";
             }
             else {
                 if (!b.Luke || ! b.Luke.ref){
                     retVal = 0; //a, but no b; leave the same
-                    mylog(logMsg+": HERE");
+                   // mylog(logMsg+": HERE");
                 }
                 else {
                     retVal = 1; // b, but no a. reverse.
-                     mylog(logMsg+": THERE")
+                    // mylog(logMsg+": THERE")
                 }
             }
-             mylog(logMsg + "w/ Lucan primacy, result = " + retVal);
+           //  mylog(logMsg + "w/ Lucan primacy, result = " + retVal);
+            logMsg += ("[Luke " + a.Mark.ref+"], [Luke "+b.Mark.ref+"])");
                 
         }
         else if (primaryGospel==gospels.JOHN){
-            if (a.John && a.John.ref && b.John && b.John.ref)
+            if (a.John && a.John.ref && b.John && b.John.ref) {
                 retVal = bibleRefUtils.sortChapVerseRefs(a.John.ref.split(";")[0], b.John.ref.split(";")[0]);
+            }
+            else {
+                if (!b.John || ! b.John.ref){
+                    retVal = 0; //a, but no b; leave the same
+                }
+                else {
+                    retVal = 1; // b, but no a. reverse.
+                }
+            }
+             logMsg += ("[John " + a.Mark.ref+"], [John "+b.Mark.ref+"])");
         }
-        else
+        else{
             retVal = parseInt(a.pericope) - parseInt(b.pericope);
-
-        mylog(logMsg+" -- > " + retVal);
+        }
+        mylog(logMsg+" -- > " + retVal);
         return retVal;
 }
 

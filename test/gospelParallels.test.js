@@ -167,8 +167,11 @@ test('sortAlandPericopes test', async () => {
         //{ref: "Mt 28:17", alands: [359,364]},
        // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
         {input:[287, 288, 289, 290, 291, 294, 292, 293, 295], output: [291, 294, 287, 288, 289, 290, 292, 293, 295],
-            primary: gPar.gospels.LUKE}
-        
+            primary: gPar.gospels.LUKE},
+        {input:[20,65,51], output: [20,51,65],
+            primary: gPar.gospels.MATTHEW},    
+        {input: [13, 14, 15, 16, 17, 18, 19, 20], output: [13, 14, 15, 16, 18, 20,17,19],
+            primary: gPar.gospels.MARK}
 
     ]
 	
@@ -182,14 +185,16 @@ test('sortAlandPericopes test', async () => {
 });
 
 
-test('sortAlandPericopes test', async () => {
+test('isPrimaryPericope Filter test', async () => {
 	const tests =[
      //   {ref: "Matt 28:17", sort=gPar.gospels.MATTHEWalands: [359,364]},
         //{ref: "Mt 28:17", alands: [359,364]},
        // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
         {input:[4,6], output: [4],
-            primary: gPar.gospels.LUKE}
-        
+            primary: gPar.gospels.LUKE},
+        {input: [267,268,269,270,271,272,273,274,275,276], output:[269,271,272,275,276], primary: gPar.gospels.MATTHEW}
+      
+ 
 
     ]
 	
@@ -197,6 +202,35 @@ test('sortAlandPericopes test', async () => {
         
         //const output = t.input.toSorted((a,b)=>gPar.sortByPrimaryFunc(a,b,t.primary));
         const output = t.input.filter((n)=>gPar.alandSynopsis.isPrimaryPericope(n,t.primary));
+        expect(output.length).toEqual(t.output.length)
+        expect(output).toEqual(t.output);
+    }
+});
+
+test('sort and filter test', async () => {
+	const tests =[
+     //   {ref: "Matt 28:17", sort=gPar.gospels.MATTHEWalands: [359,364]},
+        //{ref: "Mt 28:17", alands: [359,364]},
+       // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
+        {input:[4,6], output: [4],
+            primary: gPar.gospels.LUKE},
+        {input: [269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286], 
+            output:[269], primary: gPar.gospels.JOHN},
+        {input: [269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286], 
+            output:[269,270,273,274,276,278,280,281,283,284,286], primary: gPar.gospels.LUKE},
+        {input: [269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286], 
+            output:[269,271,272,273,274,275,276,278,280,281,282,283,284,286], primary: gPar.gospels.MARK},
+
+
+      
+ 
+
+    ]
+	
+    for (const t of tests){
+        
+        //const output = t.input.toSorted((a,b)=>gPar.sortByPrimaryFunc(a,b,t.primary));
+        const output = gPar.filterSortAlandPericopes(t.input,t.primary);
         expect(output.length).toEqual(t.output.length)
         expect(output).toEqual(t.output);
     }
