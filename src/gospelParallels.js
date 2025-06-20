@@ -51,7 +51,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, h
     const bookObj = bibleRefUtils.getBookChapVerseFromRef(gospelRef);
     
     const bookAbbrev = getBookAbbrev(bookObj.book);
-    mylog("trying to get bookabbrev from " + bookObj.book + ", and got: " + bookAbbrev);
+    //mylog("trying to get bookabbrev from " + bookObj.book + ", and got: " + bookAbbrev);
 
     
     const found = alandSynopsis.pericopes.filter((obj)=>{
@@ -188,7 +188,7 @@ export function sortByPrimaryFunc(a,b, primaryGospel=gospels.NONE){
                 }
             }
             logMsg += ("[Mk " + a.Mark.ref+"], [Mark "+b.Mark.ref+"])");
-            mylog(logMsg+"-->"+ retVal);
+           // mylog(logMsg+"-->"+ retVal);
         }
         else if (primaryGospel==gospels.LUKE){
             if (a.Luke && a.Luke.ref && b.Luke && b.Luke.ref){
@@ -227,14 +227,14 @@ export function sortByPrimaryFunc(a,b, primaryGospel=gospels.NONE){
         else{
             retVal = parseInt(a.pericope) - parseInt(b.pericope);
         }
-        mylog(logMsg+" -- > " + retVal);
+       // mylog(logMsg+" -- > " + retVal);
         return retVal;
 }
 
 /**
  * 
  * @param {number} alandPericopeNum 
- * @param {boolean} ignoreOthers - i  true (default), we'll exclude any non-gospel NT parallels from return value. If false, other non-gospel NT parallels will be included.
+ * @param {boolean} ignoreOthers - if true (default), we'll exclude any non-gospel NT parallels from return value. If false, other non-gospel NT parallels will be included.
  * @returns {string[]} -- array of strings, each of which is an NT/gospels reference
  */
 export function getAlandPericopeRefs(alandPericopeNum, ignoreOthers=true){
