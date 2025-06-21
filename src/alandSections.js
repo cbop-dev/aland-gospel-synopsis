@@ -1,4 +1,4 @@
-import { mylog } from "./lib/env/env";
+import { mylog } from "./lib/env/env.js";
 export const gospels = {
     MATTHEW: 0,
     MARK: 1,
