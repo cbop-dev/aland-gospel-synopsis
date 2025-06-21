@@ -1,3 +1,4 @@
+import { mylog } from "./lib/env/env";
 export const gospels = {
     MATTHEW: 0,
     MARK: 1,
@@ -398,9 +399,9 @@ sections: [
 ],
 
 /**
- * 
+ * @name lookupPericope
  * @param {number} num 
- * @returns @type {{pericope: number, title: string, 
+ * @returns {{pericope: number, title: string, 
      *  Matt: { ref: string,  primary: boolean }, 
      *  Mark: { ref: string , primary: boolean },
      *  Luke: { ref:  string , primary: boolean }, 
@@ -408,6 +409,7 @@ sections: [
      *  other: { ref:string }}} 
  */
 lookupPericope(num){
+    mylog("lookupPericope("+num+")")
     return this.pericopes.find((p)=>parseInt(p.pericope)==parseInt(num));
 },
 

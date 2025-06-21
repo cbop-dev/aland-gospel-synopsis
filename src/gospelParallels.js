@@ -42,11 +42,11 @@ export function getBookAbbrev(refString){
  *              This  Should be assigned to one of the enum values of the "gospels" const above. Default is "gospels.NONE" (=4),
  *              which uses the order in which Aland arranged the pericopes.
  *              If set to another option, the results will be sorted according to the order of that gospel's texts.
- *          
+ * @param {boolean} hideSolos - if true, results will exclude Aland's pericope groups which have only one column (no parallels)         
  * @returns {number[]} an array of integers, each of which corresponds to the pericope numbers assigned by
  *                      Aland's Synopsis Quattuor Evangeliorum, which contain the given NT text.
  */
-export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, hideNonPrimary=false){
+export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, hideNonPrimary=false, hideSolos=false){
     //mylog("getAlandPericopeNumbers("+ gospelRef+")");
     const bookObj = bibleRefUtils.getBookChapVerseFromRef(gospelRef);
     
@@ -54,7 +54,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, h
     //mylog("trying to get bookabbrev from " + bookObj.book + ", and got: " + bookAbbrev);
 
     
-    const found = alandSynopsis.pericopes.filter((obj)=>{
+    const found = filterSortAlandPericopes(alandSynopsis.pericopes.filter((obj)=>{
        
         //mylog("...checking alandSynopsis.pericopes[" + k + "][" + bookAbbrev +"].ref")
         //mylog(alandSynopsis.pericopes[k][bookAbbrev]);
@@ -95,45 +95,63 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, h
             
       
  
-    })
-    .filter((o)=>{
-        let retVal = true;
-        if( hideNonPrimary &&
-            (   (primaryGospel==gospels.MATTHEW && !o.Matt.primary) ||
-                (primaryGospel==gospels.MARK && !o.Mark.primary) ||
-                (primaryGospel==gospels.LUKE && !o.Luke.primary) ||
-                (primaryGospel==gospels.JOHN && !o.John.primary)
-            )
-        )
-            retVal = false;
-
-        return retVal;
-            
-     })
-    .sort((a,b)=>sortByPrimaryFunc(a,b,primaryGospel)).map((o)=>o.pericope);
+    }).map((p)=>p.pericope),primaryGospel,hideNonPrimary,hideSolos);
     mylog("AlandNumbers found: " + found.join(','));
     return found ? found : [];
 }
 
+
 //NB: in place!
 
 /**
- * @description Sorts, in place, an array of Aland pericope numbers according to the arrangement of the selected.
+ * @description Sorts, in place, an array of Aland pericope numbers according to the arrangement of the selected gospel.
  * For pericopes which lack a text from the given gospel, these are placed at the end of the list
  * @param {number[]} alandArray -- array of pericope numbers, using the numbering system of Aland. 
  * @param {number} primaryGospel -- one of the enum values in `gospels` enum in the alandSynopsis.js module.
  * @returns 
  */
 export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
-    return alandArray.sort((a,b)=>
-        sortByPrimaryFunc(alandSynopsis.lookupPericope(a),
+    return alandArray.sort((a,b)=>{
+        mylog("sortAlandPericopes.sort("+a+","+b+")", true);
+        mylog("sortAlandPericopes.sort/lookedup("+alandSynopsis.lookupPericope(a).pericope+","+alandSynopsis.lookupPericope(b).pericope+")", true);
+        return sortByPrimaryFunc(alandSynopsis.lookupPericope(a),
                           alandSynopsis.lookupPericope(b),
-                        primaryGospel));
+                        primaryGospel)});
+                        
 }
 
 //not in place!
-export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE){
-    return sortAlandPericopes([...alandArray],primaryGospel).filter((p)=>alandSynopsis.isPrimaryPericope(p,primaryGospel));
+/**
+ * 
+ * @param {number[]} alandArray 
+ * @param {number} primaryGospel 
+ * @param {boolean} hideNonPrimary 
+ * @param {boolean} hideSolos 
+ * @returns {number[]}
+ */
+export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,hideNonPrimary=true,hideSolos=false){
+    return sortAlandPericopes([...alandArray],primaryGospel).filter(
+        (pNum)=>alandSynopsis.isPrimaryPericope(pNum,primaryGospel)).filter((pNum=>{
+        let retVal = true;
+        if( hideSolos){
+            let numCols = 0;
+            const p = alandSynopsis.lookupPericope(pNum);
+            for (const ref of [p.Matt.ref, p.Mark.ref, p.Luke.ref, p.John.ref]) {
+                if (ref && ref.length) {
+                    numCols++;
+                }
+            }
+            if (numCols <= 1) {
+                
+                retVal = false;
+            }
+            mylog("hideSolos filter for pericope + " + pNum +" --> " + numCols + " cols found.", true)
+        } 
+            
+        
+        return retVal;
+            
+     }));
 }
 /**
  * 

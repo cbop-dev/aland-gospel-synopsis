@@ -235,3 +235,16 @@ test('sort and filter test', async () => {
         expect(output).toEqual(t.output);
     }
 });
+
+test('filter Solos', async () => {
+	const tests=[
+        {input: [5,8,10,13], filter: true, output: [8,13]},
+             {input: [5,8,10,13], filter: false, output: [5,8,10,13]}
+    ]
+
+    for (const t of tests){
+        expect(gPar.filterSortAlandPericopes(t.input,gPar.gospels.NONE,false,t.filter)).toEqual(t.output);
+    }
+	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
