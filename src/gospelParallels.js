@@ -145,7 +145,7 @@ export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,h
                 
                 retVal = false;
             }
-            mylog("hideSolos filter for pericope + " + pNum +" --> " + numCols + " cols found.", true)
+           // mylog("hideSolos filter for pericope + " + pNum +" --> " + numCols + " cols found.")
         } 
             
         
