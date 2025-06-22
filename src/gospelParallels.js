@@ -46,7 +46,7 @@ export function getBookAbbrev(refString){
  * @returns {number[]} an array of integers, each of which corresponds to the pericope numbers assigned by
  *                      Aland's Synopsis Quattuor Evangeliorum, which contain the given NT text.
  */
-export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, hideNonPrimary=false, hideSolos=false){
+export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, hideNonPrimary=false, hideSolos=false, hideNonPrimarySolos=false){
     //mylog("getAlandPericopeNumbers("+ gospelRef+")");
     const bookObj = bibleRefUtils.getBookChapVerseFromRef(gospelRef);
     
@@ -127,26 +127,43 @@ export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
  * @param {number} primaryGospel 
  * @param {boolean} hideNonPrimary 
  * @param {boolean} hideSolos 
+ * @param {boolean} hideNonPrimarySolos
  * @returns {number[]}
  */
-export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,hideNonPrimary=true,hideSolos=false){
+export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
+    hideNonPrimary=true,hideSolos=false,hideNonPrimarySolos=false){
+        
     return sortAlandPericopes([...alandArray],primaryGospel).filter(
-        (pNum)=>alandSynopsis.isPrimaryPericope(pNum,primaryGospel)).filter((pNum=>{
+        (pNum)=>!hideNonPrimary || alandSynopsis.isPrimaryPericope(pNum,primaryGospel)).filter((pNum=>{
         let retVal = true;
-        if( hideSolos){
-            let numCols = 0;
+        if ((!hideSolos) && primaryGospel==gospels.NONE && hideNonPrimarySolos) {
+            //same as hideSolos:
+            hideSolos=true
+        }
+        if( hideSolos || hideNonPrimarySolos) {
+            
             const p = alandSynopsis.lookupPericope(pNum);
-            for (const ref of [p.Matt.ref, p.Mark.ref, p.Luke.ref, p.John.ref]) {
-                if (ref && ref.length) {
-                    numCols++;
+            mylog('filterSortPers: checking for solos for pericope ' +pNum,true);
+            if (hideSolos || (
+                primaryGospel==gospels.MATTHEW && !p.Matt.primary ||
+                primaryGospel==gospels.MARK && !p.Mark.primary ||
+                primaryGospel==gospels.LUKE && !p.Luke.primary ||
+                primaryGospel==gospels.JOHN && !p.John.primary 
+            ) ) { //eliminate all single-column sections:
+                let numCols = 0;
+                for (const ref of [p.Matt.ref, p.Mark.ref, p.Luke.ref, p.John.ref]) {
+                    if (ref && ref.length) {
+                        numCols++;
+                    }
+                }
+                if (numCols <= 1) {
+                    
+                    retVal = false;
                 }
             }
-            if (numCols <= 1) {
-                
-                retVal = false;
-            }
            // mylog("hideSolos filter for pericope + " + pNum +" --> " + numCols + " cols found.")
-        } 
+        }
+
             
         
         return retVal;
