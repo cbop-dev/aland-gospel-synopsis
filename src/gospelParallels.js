@@ -112,8 +112,8 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel=gospels.NONE, h
  */
 export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
     return alandArray.sort((a,b)=>{
-        mylog("sortAlandPericopes.sort("+a+","+b+")", true);
-        mylog("sortAlandPericopes.sort/lookedup("+alandSynopsis.lookupPericope(a).pericope+","+alandSynopsis.lookupPericope(b).pericope+")", true);
+        //mylog("sortAlandPericopes.sort("+a+","+b+")");
+       // mylog("sortAlandPericopes.sort/lookedup("+alandSynopsis.lookupPericope(a).pericope+","+alandSynopsis.lookupPericope(b).pericope+")");
         return sortByPrimaryFunc(alandSynopsis.lookupPericope(a),
                           alandSynopsis.lookupPericope(b),
                         primaryGospel)});
@@ -143,7 +143,7 @@ export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
         if( hideSolos || hideNonPrimarySolos) {
             
             const p = alandSynopsis.lookupPericope(pNum);
-            mylog('filterSortPers: checking for solos for pericope ' +pNum,true);
+           // mylog('filterSortPers: checking for solos for pericope ' +pNum);
             if (hideSolos || (
                 primaryGospel==gospels.MATTHEW && !p.Matt.primary ||
                 primaryGospel==gospels.MARK && !p.Mark.primary ||

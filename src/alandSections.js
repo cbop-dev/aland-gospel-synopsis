@@ -409,7 +409,7 @@ sections: [
      *  other: { ref:string }}} 
  */
 lookupPericope(num){
-    mylog("lookupPericope("+num+")")
+   // mylog("lookupPericope("+num+")")
     return this.pericopes.find((p)=>parseInt(p.pericope)==parseInt(num));
 },
 
