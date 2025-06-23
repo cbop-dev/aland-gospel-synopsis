@@ -238,20 +238,21 @@ test('sort and filter test', async () => {
 
 test('filter Solos', async () => {
 	const tests=[
-        {input: [5,8,10,13], hideNonP: false,filter: true, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: [8,13]},
-        {input: [41], hideNonP: false,filter: true, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: []},
-        {input: [5,8,10,13], hideNonP: false,filter: false, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: false,filter: false, hideNonPrimarySolos: true,primary: gPar.gospels.LUKE, output: [5,8,13]},
-        {input: [5,8,10,13], hideNonP: true,filter: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [8,10,13]},
-        {input: [5,8,10,13], hideNonP: false,filter: false, hideNonPrimarySolos: false, primary: gPar.gospels.NONE, output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: true, filter: false, hideNonPrimarySolos: false, primary: gPar.gospels.NONE, output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: false, filter: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: [8,13]},
+        {input: [41], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: []},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: true,primary: gPar.gospels.LUKE, output: [5,8,13]},
+         {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.LUKE, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: true,hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [8,10,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.NONE, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.NONE, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: false, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [5,8,10,13]},
         
    
     ]   
 
     for (const t of tests){
-        expect(gPar.filterSortAlandPericopes(t.input,t.primary, t.hideNonP,t.filter,t.hideNonPrimarySolos )).toEqual(t.output);
+        expect(gPar.filterSortAlandPericopes(t.input,t.primary, t.hideNonP,t.hideSolos,t.hideNonPrimarySolos )).toEqual(t.output);
     }
 	expect(true).toBe(true);
 	//await expect(page.locator('h1')).toBeVisible();

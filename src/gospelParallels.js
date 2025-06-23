@@ -120,6 +120,8 @@ export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
                         
 }
 
+
+
 //not in place!
 /**
  * 
@@ -130,10 +132,10 @@ export function sortAlandPericopes(alandArray,primaryGospel=gospels.NONE ){
  * @param {boolean} hideNonPrimarySolos
  * @returns {number[]}
  */
-export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
+export function filterAlandPericopes(alandArray,primaryGospel=gospels.NONE,
     hideNonPrimary=true,hideSolos=false,hideNonPrimarySolos=false){
         
-    return sortAlandPericopes([...alandArray],primaryGospel).filter(
+    return alandArray.filter(
         (pNum)=>!hideNonPrimary || alandSynopsis.isPrimaryPericope(pNum,primaryGospel)).filter((pNum=>{
         let retVal = true;
         if ((!hideSolos) && primaryGospel==gospels.NONE && hideNonPrimarySolos) {
@@ -169,6 +171,24 @@ export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
         return retVal;
             
      }));
+}
+
+
+//not in place!
+/**
+ * 
+ * @param {number[]} alandArray 
+ * @param {number} primaryGospel 
+ * @param {boolean} hideNonPrimary 
+ * @param {boolean} hideSolos 
+ * @param {boolean} hideNonPrimarySolos
+ * @returns {number[]}
+ */
+export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
+    hideNonPrimary=true,hideSolos=false,hideNonPrimarySolos=false){
+        
+    return filterAlandPericopes(sortAlandPericopes([...alandArray],primaryGospel),primaryGospel,
+    hideNonPrimary,hideSolos,hideNonPrimarySolos);
 }
 /**
  * 
