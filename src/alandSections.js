@@ -5,7 +5,10 @@ export const gospels = Object.freeze({
     LUKE: "Luke",
     JOHN: "John",
     isValid(gospelEnum){
-        return gospelEnum in [this.MATTHEW,this.MARK,this.LUKE,this.JOHN]
+        
+        const retVal= ["Matthew","Mark","Luke","John"].includes(gospelEnum);
+        //mylog("isValid('"+gospelEnum+"')="+retVal, true);
+        return retVal;
     },
     getPericopeGospelRef(pericope, selectedGospel){
     let ref = ''
