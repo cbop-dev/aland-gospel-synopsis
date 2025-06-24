@@ -136,7 +136,7 @@ export function splitBookChap(string){
     }
     else{
         //error
-        mylog("splitBookChap could not parse '"+string+"'");
+//"splitBookChap could not parse '"+string+"'");
     }
 
    // mylog("splitBookChap(string)->{b:" + theBook + ", c:"+theChap+"}");
@@ -168,7 +168,7 @@ export function getBookChapVerseFromRef(refString){
         }
         else{ //what?? bad input: colon with not verses! (e.g., "Eph 2:")
             badInput=true;
-            mylog("bad input with colon: '"+refString+"'");
+          //  mylog("bad input with colon: '"+refString+"'");
         }
     }
     else { //no verses, just book and chap
@@ -212,7 +212,7 @@ export function expandRefs(refString){
     let latestBook = '';
     for (const ref of refString.split(";")){
         let bookCv = getBookChapVerseFromRef(ref);
-        mylog("expandRefs: bookCv of '"+ref +"'= "+[bookCv.book,bookCv.chap,bookCv.v].join(','));
+        //mylog("expandRefs: bookCv of '"+ref +"'= "+[bookCv.book,bookCv.chap,bookCv.v].join(','));
         if (bookCv.book){
             latestBook = bookCv.book;
         }

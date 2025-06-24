@@ -4,6 +4,9 @@ import { expect, test } from 'vitest';
 import { alandSynopsis } from "../src/alandSections.js";
 import * as MathUtils from "../src/lib/utils/math-utils.js";
 
+function rest(name,func){
+    //do nothing;
+}
 test('dummy', async () => {
 	
 	expect(true).toBe(true);
@@ -194,7 +197,6 @@ test('isPrimaryPericope Filter test', async () => {
             primary: gPar.gospels.names.MATTHEW}
       
  
-
     ]
 	
     for (const t of tests){

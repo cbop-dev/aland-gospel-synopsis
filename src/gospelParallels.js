@@ -100,7 +100,7 @@ export function getAlandPericopeNumbers(gospelRef, primaryGospel='', hideNonPrim
       
  
     }).map((p)=>p.pericope),primaryGospel,hideNonPrimary,hideSolos);
-    mylog("AlandNumbers found: " + found.join(','));
+  //  mylog("AlandNumbers found: " + found.join(','));
     return found ? found : [];
 }
 
@@ -237,33 +237,40 @@ export function sortByPrimaryFunc(a,b, primaryGospel=''){
     let refA=alandSynopsis.getPericopeGospelRef(a,primaryGospel)
     let refB=alandSynopsis.getPericopeGospelRef(b,primaryGospel);
     
-    logMsg += "for "+ (primaryGospel ? primaryGospel : "NONE") +"["+refA+",["+refB+"])";
+    //logMsg += "for "+ (primaryGospel ? primaryGospel : "NONE") +"["+refA+"],["+refB+"])";
     //mylog(logMsg+": about to compare refs...", true);
     let commonPrimaries=[];
     let commonGospels=[];
     if (refA && refB) {
         retVal = bibleRefUtils.sortChapVerseRefs(refA.split(";")[0], refB.split(";")[0]);
+       // mylog("comparing A and B!")
     }
     else if((commonPrimaries = alandSynopsis.getCommonPrimaries(a,b)).length){
+        
         retVal = bibleRefUtils.sortChapVerseRefs(a[gospels.nameAbbrevDict[commonPrimaries[0]]].ref.split(";")[0], 
         b[gospels.nameAbbrevDict[commonPrimaries[0]]].ref.split(";")[0]);
+       // mylog("doing commonPrimaries:"+retVal);
     }
     else if((commonGospels = alandSynopsis.getCommonGospels(a,b)).length){
         retVal = bibleRefUtils.sortChapVerseRefs(a[gospels.nameAbbrevDict[commonGospels[0]]].ref.split(";")[0], 
         b[gospels.nameAbbrevDict[commonGospels[0]]].ref.split(";")[0]);
+        //mylog("doing commonGospels:"+retVal);
     }    
-    else if(refA) {//A but no B. Keep/put A first
+    /*else if(refA) {//A but no B. Keep/put A first
         retVal=-1
+        mylog("Ref A not b", true);
 
     }
     else if(refB){//B but no A. put B first
         retVal = 1;
-    }
+        mylog("Ref B not A", true)
+    }*/
     else{//no a and no b: use default ordering
         retVal = parseInt(a.pericope) - parseInt(b.pericope);
+       // mylog("neither A nor b", true)
     }
        
-   // mylog(logMsg+". retval -- > " + retVal,true);
+  // mylog(logMsg+". retval -- > " + retVal,true);
     return retVal;
 }
 
@@ -297,7 +304,7 @@ export function getAlandPericopeRefs(alandPericopeNum, ignoreOthers=true){
         }
     }
     else {
-        mylog("getAlandPericopeRefs("+alandPericopeNum+") found NO RESULTS!")
+        //mylog("getAlandPericopeRefs("+alandPericopeNum+") found NO RESULTS!")
     }
     
     return refs;
@@ -312,7 +319,7 @@ export function getAlandPericopeRefs(alandPericopeNum, ignoreOthers=true){
  * If the verse appears in no such section, returns an empty array.
  */
 export function getAlandSection(refString,sortByGospel=''){
-    mylog("getAlandSection("+refString+")");
+//"getAlandSection("+refString+")");
     refString = bibleRefUtils.cleanString(refString);
     const found = alandSynopsis.sections.filter(
         (sec)=>sec.refs.split(';').find(
@@ -328,7 +335,7 @@ export function getBookNameBySyn(syn){
     
     const id = getBookID(syn)
     const name = getBookName(id);
-    mylog("getBookNameBySyn("+syn+")->id:"+id+", name:" +name)
+    //mylog("getBookNameBySyn("+syn+")->id:"+id+", name:" +name)
     return name;
 }
 //move to alandSynopsis object!

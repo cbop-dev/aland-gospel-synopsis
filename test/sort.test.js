@@ -4,14 +4,21 @@ import { mylog } from '../src/lib/env/env.js';
 import { expect, test } from 'vitest';
 import { alandSynopsis } from "../src/alandSections.js";
 import * as MathUtils from "../src/lib/utils/math-utils.js";
+import {gospels} from '../src/lib/gospels.js';
+import gospelParallels from '../src/gospelParallels.js';
 
 function rest(name,func){
     //do nothing;
 }
 
 test('dummy', async () => {
+	const tests=[
+
+    ]
+    for (const t of tests){
+        expect(true).toBe(true);    
+    }
 	
-	expect(true).toBe(true);
 	//await expect(page.locator('h1')).toBeVisible();
 });
 
@@ -39,6 +46,9 @@ test('sort', async () => {
    mylog("p266 Lucan ref="+p266.Luke.ref, true);
    mylog("p267 Lucan ref="+p267.Luke.ref, true)
 	expect(myoutput).toBeGreaterThan(0);
+
+});
+test('sort', async () => {
     const tests=[
         //5: Luke only; 8. adoration = Matt+Lk, both primary); 10: Matt only; 13: all 4, all primary
         {input: [341,342], primary: '',output: [341,342]},
@@ -46,9 +56,9 @@ test('sort', async () => {
          {input: [266,267], primary: gPar.gospels.names.LUKE,output: [267,266]},
           {input: [251,267], primary: gPar.gospels.names.LUKE,output: [267,251]},
         {input: [255,256], primary: gPar.gospels.names.LUKE,output: [256,255]},
-       {input:[251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268],primary: gPar.gospels.names.LUKE,
-        output:[251,256,252,253,254,255,257,258,259,260,261,262,264,265,266,263,268]},
          {input: [267,261], primary: gPar.gospels.names.LUKE,output: [261,267]},
+                {input:[251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268],primary: gPar.gospels.names.LUKE,
+        output:[267,251,256,252,253,254,255,257,258,259,260,261,262,264,265,266,263,268]},
         
     ];
 
@@ -62,5 +72,19 @@ test('sort', async () => {
         expect(t.input).toEqual(t.output);
     }
 	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
+
+test('weird sort', async () => {
+	const tests=[
+
+        {input:[365,10],gospel: gospels.names.LUKE,output:[10,365]}
+
+    ]
+    for (const t of tests){
+        expect(gospelParallels.sortAlandPericopes(t.input,t.gospel)).toEqual(t.output);   
+    }
+	
 	//await expect(page.locator('h1')).toBeVisible();
 });
