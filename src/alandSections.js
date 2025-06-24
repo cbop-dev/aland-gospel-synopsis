@@ -1,11 +1,25 @@
 import { mylog } from "./lib/env/env.js";
-export const gospels = {
-    MATTHEW: 0,
-    MARK: 1,
-    LUKE: 2,
-    JOHN: 3,
-    NONE: 4
+export const gospels = Object.freeze({
+    MATTHEW: "Matthew",
+    MARK: "Mark",
+    LUKE: "Luke",
+    JOHN: "John",
+    isValid(gospelEnum){
+        return gospelEnum in [this.MATTHEW,this.MARK,this.LUKE,this.JOHN]
+    },
+    getPericopeGospelRef(pericope, selectedGospel){
+    let ref = ''
+    if (selectedGospel==gospels.MATTHEW)
+        ref = pericope.Matt.ref;
+    else if (selectedGospel==gospels.MARK)
+        ref = pericope.Mark.ref;
+    else if (selectedGospel==gospels.LUKE)
+        ref = pericope.Luke.ref;
+    else if (selectedGospel==gospels.JOHN)
+        ref = pericope.John.ref;
+    return ref;
 }
+});
 export const alandSynopsis = {
 pericopes: [
 {pericope: 1 , title: "Prologue" , Matt: { ref: "1:1" , primary: true }, Mark: { ref: "1:1" , primary: true }, Luke: { ref: "1:1-4" , primary: true }, John: { ref: "1:1-18" , primary: true }, other: { ref: "Acts 1:1-2" }},
@@ -423,7 +437,7 @@ lookupSection(num){
      return this.sections.find((s)=>s.section==num);    
 },
 
-isPrimaryPericope(pericopeNum, primaryGospel=gospels.NONE){
+isPrimaryPericope(pericopeNum, primaryGospel=''){
     const per = this.lookupPericope(pericopeNum);
     let isPrimary=true;
     if (per) {

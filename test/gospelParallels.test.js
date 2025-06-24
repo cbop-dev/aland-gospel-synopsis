@@ -2,6 +2,8 @@ import * as gPar from '../src/gospelParallels.js';
 import { mylog } from '../src/lib/env/env.js';
 import { expect, test } from 'vitest';
 import { alandSynopsis } from "../src/alandSections.js";
+import * as MathUtils from "../src/lib/utils/math-utils.js";
+
 test('dummy', async () => {
 	
 	expect(true).toBe(true);
@@ -170,7 +172,7 @@ test('sortAlandPericopes test', async () => {
             primary: gPar.gospels.LUKE},
         {input:[20,65,51], output: [20,51,65],
             primary: gPar.gospels.MATTHEW},    
-        {input: [13, 14, 15, 16, 17, 18, 19, 20], output: [13, 14, 15, 16, 18, 20,17,19],
+        {input: [13, 14, 15, 16, 17, 18, 19, 20], output: [13, 14, 15, 16, 18, 19,20,17],
             primary: gPar.gospels.MARK}
 
     ]
@@ -238,16 +240,17 @@ test('sort and filter test', async () => {
 
 test('filter Solos', async () => {
 	const tests=[
-        {input: [5,8,10,13], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: [8,13]},
-        {input: [41], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: []},
-        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.NONE,output: [5,8,10,13]},
+        //5: Luke only; 8. adoration = Matt+Lk, both primary); 10: Matt only; 13: all 4, all primary
+        {input: [5,8,10,13], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: '',output: [8,13]},
+        {input: [41], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: '',output: []},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: '',output: [5,8,10,13]},
         {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: true,primary: gPar.gospels.LUKE, output: [5,8,13]},
-         {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.LUKE, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.LUKE, output: [5,8,10,13]},
         {input: [5,8,10,13], hideNonP: true,hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [8,10,13]},
-        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.NONE, output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.NONE, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false, primary: '', output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: '', output: [5,8,10,13]},
         {input: [5,8,10,13], hideNonP: false, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [5,8,10,13]},
-        
+        {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.LUKE, output: [5,8,13]},
    
     ]   
 
@@ -256,4 +259,21 @@ test('filter Solos', async () => {
     }
 	expect(true).toBe(true);
 	//await expect(page.locator('h1')).toBeVisible();
+});
+
+
+
+test('alandSection filter/sort', () => {
+	/*
+    const alands=MathUtils.createNumArrayFromStringListRange(gPar.alandSynopsis.lookupSection(12).pericopes);
+    const alandsCopy = [...alands]
+    const expected=MathUtils.createNumArrayFromStringListRange("251-268");
+
+    expect(alands).toEqual(expected);
+	
+    gPar.sortAlandPericopes(alands,gPar.gospels.JOHN);
+	expect(alands).not.toEqual(alandsCopy)
+    const johnSorted=[257,258,259,260,261,267,268,251,252,253,254,255,256,262,263,264,265,266];
+    //expect(alands).toEqual(johnSorted);*/
+    expect(true).toBe(true);
 });
