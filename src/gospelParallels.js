@@ -148,7 +148,7 @@ export function sortAlandPericopes(alandArray,primaryGospel='' ){
 /**
  * 
  * @param {number[]} alandArray 
- * @param {number} primaryGospel 
+ * @param {string} primaryGospel 
  * @param {boolean} hideNonPrimary 
  * @param {boolean} hideSolos 
  * @param {boolean} hideNonPrimarySolos
@@ -169,10 +169,10 @@ export function filterAlandPericopes(alandArray,primaryGospel='',
             const p = alandSynopsis.lookupPericope(pNum);
            // mylog('filterSortPers: checking for solos for pericope ' +pNum);
             if (hideSolos || (
-                primaryGospel==gospels.MATTHEW && !p.Matt.primary ||
-                primaryGospel==gospels.MARK && !p.Mark.primary ||
-                primaryGospel==gospels.LUKE && !p.Luke.primary ||
-                primaryGospel==gospels.JOHN && !p.John.primary 
+                primaryGospel==gospels.names.MATTHEW && !p.Matt.primary ||
+                primaryGospel==gospels.names.MARK && !p.Mark.primary ||
+                primaryGospel==gospels.names.LUKE && !p.Luke.primary ||
+                primaryGospel==gospels.names.JOHN && !p.John.primary 
             ) ) { //eliminate all single-column sections:
                 let numCols = 0;
                 for (const ref of [p.Matt.ref, p.Mark.ref, p.Luke.ref, p.John.ref]) {
@@ -200,7 +200,7 @@ export function filterAlandPericopes(alandArray,primaryGospel='',
 /**
  * 
  * @param {number[]} alandArray 
- * @param {number} primaryGospel 
+ * @param {string} primaryGospel 
  * @param {boolean} hideNonPrimary 
  * @param {boolean} hideSolos 
  * @param {boolean} hideNonPrimarySolos
@@ -226,7 +226,7 @@ export function filterSortAlandPericopes(alandArray,primaryGospel='',
      *  Luke: { ref:  string , primary: boolean }, 
      *  John: { ref:string , primary: boolean }, 
      *  other: { ref:string }}} b 
- * @param {number} primaryGospel  - one of the alandSynopsis.gospels enum values.
+ * @param {string} primaryGospel  - one of the alandSynopsis.gospels enum values.
  * @returns 
  */
 export function sortByPrimaryFunc(a,b, primaryGospel=''){

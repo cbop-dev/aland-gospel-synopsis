@@ -483,10 +483,10 @@ isPrimaryPericope(pericopeNum, primaryGospel=''){
     let isPrimary=true;
     if (per) {
         if (
-            (primaryGospel==gospels.MATTHEW && !per.Matt.primary) ||
-            (primaryGospel==gospels.MARK && !per.Mark.primary) ||
-            (primaryGospel==gospels.LUKE && !per.Luke.primary) ||
-            (primaryGospel==gospels.JOHN && !per.John.primary)){
+            (primaryGospel==gospels.names.MATTHEW && !per.Matt.primary) ||
+            (primaryGospel==gospels.names.MARK && !per.Mark.primary) ||
+            (primaryGospel==gospels.names.LUKE && !per.Luke.primary) ||
+            (primaryGospel==gospels.names.JOHN && !per.John.primary)){
                 
                 isPrimary=false;
         }

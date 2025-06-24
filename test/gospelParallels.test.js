@@ -165,15 +165,13 @@ test('getBookName', async () => {
 
 test('sortAlandPericopes test', async () => {
 	const tests =[
-     //   {ref: "Matt 28:17", sort=gPar.gospels.MATTHEWalands: [359,364]},
-        //{ref: "Mt 28:17", alands: [359,364]},
-       // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
+    
         {input:[287, 288, 289, 290, 291, 294, 292, 293, 295], output: [291, 294, 287, 288, 289, 290, 292, 293, 295],
-            primary: gPar.gospels.LUKE},
+            primary: gPar.gospels.names.LUKE},
         {input:[20,65,51], output: [20,51,65],
-            primary: gPar.gospels.MATTHEW},    
+            primary: gPar.gospels.names.MATTHEW},    
         {input: [13, 14, 15, 16, 17, 18, 19, 20], output: [13, 14, 15, 16, 18, 19,20,17],
-            primary: gPar.gospels.MARK}
+            primary: gPar.gospels.names.MARK}
 
     ]
 	
@@ -189,12 +187,11 @@ test('sortAlandPericopes test', async () => {
 
 test('isPrimaryPericope Filter test', async () => {
 	const tests =[
-     //   {ref: "Matt 28:17", sort=gPar.gospels.MATTHEWalands: [359,364]},
-        //{ref: "Mt 28:17", alands: [359,364]},
-       // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
+     
         {input:[4,6], output: [4],
-            primary: gPar.gospels.LUKE},
-        {input: [267,268,269,270,271,272,273,274,275,276], output:[269,271,272,275,276], primary: gPar.gospels.MATTHEW}
+            primary: gPar.gospels.names.LUKE},
+        {input: [267,268,269,270,271,272,273,274,275,276], output:[269,271,272,275,276], 
+            primary: gPar.gospels.names.MATTHEW}
       
  
 
@@ -211,17 +208,15 @@ test('isPrimaryPericope Filter test', async () => {
 
 test('sort and filter test', async () => {
 	const tests =[
-     //   {ref: "Matt 28:17", sort=gPar.gospels.MATTHEWalands: [359,364]},
-        //{ref: "Mt 28:17", alands: [359,364]},
-       // {sec: 16, primary: gPar.gospels.LUKE, alands: [294, 287, 288, 289, 290, 291, 292, 293, 295]},
+     
         {input:[4,6], output: [4],
-            primary: gPar.gospels.LUKE},
+            primary: gPar.gospels.names.LUKE},
         {input: [269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286], 
-            output:[269], primary: gPar.gospels.JOHN},
+            output:[269], primary: gPar.gospels.names.JOHN},
         {input: [269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286], 
-            output:[269,270,273,274,276,278,280,281,283,284,286], primary: gPar.gospels.LUKE},
+            output:[269,270,273,274,276,278,280,281,283,284,286], primary: gPar.gospels.names.LUKE},
         {input: [269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286], 
-            output:[269,271,272,273,274,275,276,278,280,281,282,283,284,286], primary: gPar.gospels.MARK},
+            output:[269,271,272,273,274,275,276,278,280,281,282,283,284,286], primary: gPar.gospels.names.MARK},
 
 
       
@@ -244,13 +239,13 @@ test('filter Solos', async () => {
         {input: [5,8,10,13], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: '',output: [8,13]},
         {input: [41], hideNonP: false,hideSolos: true, hideNonPrimarySolos: false,primary: '',output: []},
         {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: '',output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: true,primary: gPar.gospels.LUKE, output: [5,8,13]},
-        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.LUKE, output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: true,hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [8,10,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: true,primary: gPar.gospels.names.LUKE, output: [5,8,13]},
+        {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false,primary: gPar.gospels.names.LUKE, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: true,hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.names.MATTHEW, output: [8,10,13]},
         {input: [5,8,10,13], hideNonP: false,hideSolos: false, hideNonPrimarySolos: false, primary: '', output: [5,8,10,13]},
         {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: '', output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: false, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.MATTHEW, output: [5,8,10,13]},
-        {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.LUKE, output: [5,8,13]},
+        {input: [5,8,10,13], hideNonP: false, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.names.MATTHEW, output: [5,8,10,13]},
+        {input: [5,8,10,13], hideNonP: true, hideSolos: false, hideNonPrimarySolos: false, primary: gPar.gospels.names.LUKE, output: [5,8,13]},
    
     ]   
 
@@ -271,7 +266,7 @@ test('alandSection filter/sort', () => {
 
     expect(alands).toEqual(expected);
 	
-    gPar.sortAlandPericopes(alands,gPar.gospels.JOHN);
+    gPar.sortAlandPericopes(alands,gPar.gospels.names.JOHN);
 	expect(alands).not.toEqual(alandsCopy)
     const johnSorted=[257,258,259,260,261,267,268,251,252,253,254,255,256,262,263,264,265,266];
     //expect(alands).toEqual(johnSorted);*/

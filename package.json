@@ -1,6 +1,6 @@
 {
   "name": "@cbop-dev/aland-gospel-synopsis",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "ES Javascript module for looking up parallel texts from the NT gospels, based on Aland's 'Quattuor Synopsis Evangeliorum'",
   "keywords": [
     "gospels",
