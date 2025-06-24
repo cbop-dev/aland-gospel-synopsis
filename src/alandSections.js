@@ -1,28 +1,7 @@
 import { mylog } from "./lib/env/env.js";
-export const gospels = Object.freeze({
-    MATTHEW: "Matthew",
-    MARK: "Mark",
-    LUKE: "Luke",
-    JOHN: "John",
-    isValid(gospelEnum){
-        
-        const retVal= ["Matthew","Mark","Luke","John"].includes(gospelEnum);
-        //mylog("isValid('"+gospelEnum+"')="+retVal, true);
-        return retVal;
-    },
-    getPericopeGospelRef(pericope, selectedGospel){
-    let ref = ''
-    if (selectedGospel==gospels.MATTHEW)
-        ref = pericope.Matt.ref;
-    else if (selectedGospel==gospels.MARK)
-        ref = pericope.Mark.ref;
-    else if (selectedGospel==gospels.LUKE)
-        ref = pericope.Luke.ref;
-    else if (selectedGospel==gospels.JOHN)
-        ref = pericope.John.ref;
-    return ref;
-}
-});
+import {gospels} from './lib/gospels.js';
+
+
 export const alandSynopsis = {
 pericopes: [
 {pericope: 1 , title: "Prologue" , Matt: { ref: "1:1" , primary: true }, Mark: { ref: "1:1" , primary: true }, Luke: { ref: "1:1-4" , primary: true }, John: { ref: "1:1-18" , primary: true }, other: { ref: "Acts 1:1-2" }},
@@ -416,6 +395,15 @@ sections: [
 ],
 
 /**
+ * @typedef {{pericope: number, title: string, 
+     *  Matt: { ref: string,  primary: boolean }, 
+     *  Mark: { ref: string , primary: boolean },
+     *  Luke: { ref:  string , primary: boolean }, 
+     *  John: { ref:string , primary: boolean }, 
+     *  other: { ref:string }}} pericopegroup
+ */
+
+/**
  * @name lookupPericope
  * @param {number} num 
  * @returns {{pericope: number, title: string, 
@@ -430,7 +418,57 @@ lookupPericope(num){
     return this.pericopes.find((p)=>parseInt(p.pericope)==parseInt(num));
 },
 
+/**
+ * @description Given two Aland pericopes-groups, return a list of those "primary" gospels that they share.
+ * @param {pericopegroup} a 
+ * @param {pericopegroup} b 
+ * @returns {string[]} array of names from 'gospels.names' for those which both pericope-groups from references marked as "primary"
+ */
+getCommonPrimaries(a,b){
+    const commonPrimaries= [];
+   /* mylog("getCommonPrimaries: a=",true);
+    mylog(a, true);
+    mylog("a.Matt=",true)
+    mylog(a.Matt);
+    mylog("^---That was a.Matt!", true)
+     mylog("a['Matt']=",true)
+    mylog(a["Matt"]);
+    mylog("^---That was a['Matt']!", true)
+    mylog("But 'a' still = ");
+    mylog(a, true);
+    mylog('typeof a =' + typeof a, true);
+    mylog('typeof a.Matt =' + typeof a.Matt, true);*/
+    if(a && b) {
+        if (a.Matt && a.Matt.primary && b.Matt && b.Matt.primary)
+            commonPrimaries.push(gospels.names.MATTHEW);
+        if (a.Mark && a.Mark.primary && b.Mark && b.Mark.primary)
+            commonPrimaries.push(gospels.names.MARK);
+        if (a.Luke && a.Luke.primary && b.Luke && b.Luke.primary)
+            commonPrimaries.push(gospels.names.LUKE);
+        if (a.John && a.John.primary && b.John && b.John.primary)
+            commonPrimaries.push(gospels.names.JOHN);
+    }
+    return  commonPrimaries;
+},
 
+/**
+ * @description Given two Aland pericopes-groups, return a list of those gospels that they share.
+ * @param {pericopegroup} a primary
+ * @param {pericopegroup} b 
+ * @returns {string[]} array of names from 'gospels.names' for those which both pericope-groups have references 
+ */
+getCommonGospels(a,b){
+    const commonGospels= [];
+    if (a.Matt && a.Matt.ref && b.Matt && b.Matt.ref)
+        commonGospels.push(gospels.names.MATTHEW);
+    if (a.Mark && a.Mark.ref && b.Mark && b.Mark.ref)
+        commonGospels.push(gospels.names.MARK);
+     if (a.Luke && a.Luke.ref && b.Luke && b.Luke.ref)
+        commonGospels.push(gospels.names.LUKE);
+    if (a.John && a.John.ref && b.John && b.John.ref)
+        commonGospels.push(gospels.names.JOHN);
+    return  commonGospels;
+},
 /**
  * 
  * @param {number} num  
@@ -463,6 +501,19 @@ isPrimaryPericope(pericopeNum, primaryGospel=''){
     }
     return isPrimary;
 
+},
+
+getPericopeGospelRef(pericope, selectedGospel){
+    let ref = ''
+    if (selectedGospel==gospels.names.MATTHEW)
+        ref = pericope.Matt.ref;
+    else if (selectedGospel==gospels.names.MARK)
+        ref = pericope.Mark.ref;
+    else if (selectedGospel==gospels.names.LUKE)
+        ref = pericope.Luke.ref;
+    else if (selectedGospel==gospels.names.JOHN)
+        ref = pericope.John.ref;
+    return ref;
 }
 
 };

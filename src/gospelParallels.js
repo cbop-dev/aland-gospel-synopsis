@@ -1,8 +1,12 @@
 import { mylog } from "./lib/env/env.js";
-import { alandSynopsis, gospels } from "./alandSections.js";
+import { alandSynopsis } from "./alandSections.js";
 import { ntBooksDict } from "./ntbooks.js";
 import bibleRefUtils from "./lib/utils/bibleRefUtils.js";
-//const mylog=log.mylog;
+import {gospels} from './lib/gospels.js';
+/**
+ * @import {pericopegroup} from "./alandSections.js"
+ */
+
 
 
 
@@ -38,8 +42,8 @@ export function getBookAbbrev(refString){
 /**
  * 
  * @param {string} gospelRef -- the reference to a gospel verse (E.g., "Matt 3:17")
- * @param {number} primaryGospel -- which gospels, if any, to treat as "primary", which affects the sorting order of the results.
- *              This  Should be assigned to one of the enum values of the "gospels" const above. Default is "gospels.NONE" (=4),
+ * @param {string} primaryGospel -- which gospels, if any, to treat as "primary", which affects the sorting order of the results.
+ *              This should be assigned to one of the enum values of the "gospels" const above or empty string (none selected). Default is empty string,
  *              which uses the order in which Aland arranged the pericopes.
  *              If set to another option, the results will be sorted according to the order of that gospel's texts.
  * @param {boolean} hideSolos - if true, results will exclude Aland's pericope groups which have only one column (no parallels)         
@@ -115,8 +119,8 @@ export function sortAlandPericopes(alandArray,primaryGospel='' ){
     return alandArray.sort((a,b)=>{//move all sections without this gospel to end of array
         const perA=alandSynopsis.lookupPericope(a);
         const perB=alandSynopsis.lookupPericope(b);
-        const refA=gospels.getPericopeGospelRef(perA,primaryGospel);
-        const refB=gospels.getPericopeGospelRef(perB,primaryGospel);
+        const refA=alandSynopsis.getPericopeGospelRef(perA,primaryGospel);
+        const refB=alandSynopsis.getPericopeGospelRef(perB,primaryGospel);
         let retVal = 0;
         if (refA && !refB)
             retVal = -1;
@@ -126,11 +130,15 @@ export function sortAlandPericopes(alandArray,primaryGospel='' ){
         
 
     }).sort((a,b)=>{//now sort by ref!~
-        //mylog("sortAlandPericopes.sort("+a+","+b+")", true);
-        //mylog("sortAlandPericopes.sort/lookedup("+alandSynopsis.lookupPericope(a).pericope+","+alandSynopsis.lookupPericope(b).pericope+")", true);
-        return sortByPrimaryFunc(alandSynopsis.lookupPericope(a),
+       // mylog("sortAlandPericopes.sort("+a+","+b+")", true);
+         const retVal= sortByPrimaryFunc(alandSynopsis.lookupPericope(a),
                           alandSynopsis.lookupPericope(b),
-                        primaryGospel)});
+                        primaryGospel);
+        //if (a==267 ||b==267)
+           // mylog("sortAlandPericopes.sort/lookedup("+alandSynopsis.lookupPericope(a).pericope+","+
+          //  alandSynopsis.lookupPericope(b).pericope+")-->sort.retVal("+a+","+b+")="+retVal, true);
+       return retVal;
+    });
                         
 }
 
@@ -146,13 +154,13 @@ export function sortAlandPericopes(alandArray,primaryGospel='' ){
  * @param {boolean} hideNonPrimarySolos
  * @returns {number[]}
  */
-export function filterAlandPericopes(alandArray,primaryGospel=gospels.NONE,
+export function filterAlandPericopes(alandArray,primaryGospel='',
     hideNonPrimary=true,hideSolos=false,hideNonPrimarySolos=false){
         
     return alandArray.filter(
         (pNum)=>!hideNonPrimary || alandSynopsis.isPrimaryPericope(pNum,primaryGospel)).filter((pNum=>{
         let retVal = true;
-        if ((!hideSolos) && primaryGospel==gospels.NONE && hideNonPrimarySolos) {
+        if ((!hideSolos) && !gospels.isValid(primaryGospel) && hideNonPrimarySolos) {
             //same as hideSolos:
             hideSolos=true
         }
@@ -198,7 +206,7 @@ export function filterAlandPericopes(alandArray,primaryGospel=gospels.NONE,
  * @param {boolean} hideNonPrimarySolos
  * @returns {number[]}
  */
-export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
+export function filterSortAlandPericopes(alandArray,primaryGospel='',
     hideNonPrimary=true,hideSolos=false,hideNonPrimarySolos=false){
         
     return filterAlandPericopes(sortAlandPericopes([...alandArray],primaryGospel),primaryGospel,
@@ -221,49 +229,44 @@ export function filterSortAlandPericopes(alandArray,primaryGospel=gospels.NONE,
  * @param {number} primaryGospel  - one of the alandSynopsis.gospels enum values.
  * @returns 
  */
-export function sortByPrimaryFunc(a,b, primaryGospel=gospels.NONE){
-     let retVal = 0;
+export function sortByPrimaryFunc(a,b, primaryGospel=''){
+    let retVal = 0;
     //const logMsg = "sortByPrimaryFunc("+[a,b].join(",")+")";
     let logMsg = "sortByPrimaryFunc(";
      //mylog(logMsg);
-    let refA='';
-    let refB='';
-    if (primaryGospel==gospels.MATTHEW){
-        refA=a.Matt.ref;
-        refB=b.Matt.ref;
-        logMsg += ("[Matt " + a.Matt.ref+"], [Matt "+b.Matt.ref+"])");
-    }
-    else if (primaryGospel==gospels.MARK) {
-        refA=a.Mark.ref;
-        refB=b.Mark.ref;
-        logMsg += ("[Mk " + a.Mark.ref+"], [Mark "+b.Mark.ref+"])");
-        // mylog(logMsg+"-->"+ retVal);
-    }
-    else if (primaryGospel==gospels.LUKE){
-        refA=a.Luke.ref;
-        refB=b.Luke.ref;
-        logMsg += ("[Luke " + a.Luke.ref+"], [Luke "+b.Luke.ref+"])");
-            
-    }
-    else if (primaryGospel==gospels.JOHN){
-        refA=a.John.ref;
-        refB=b.John.ref;
-        logMsg += ("[John " + a.John.ref+"], [John "+b.John.ref+"])");
-    }
- 
+    let refA=alandSynopsis.getPericopeGospelRef(a,primaryGospel)
+    let refB=alandSynopsis.getPericopeGospelRef(b,primaryGospel);
+    
+    logMsg += "for "+ (primaryGospel ? primaryGospel : "NONE") +"["+refA+",["+refB+"])";
+    //mylog(logMsg+": about to compare refs...", true);
+    let commonPrimaries=[];
+    let commonGospels=[];
     if (refA && refB) {
         retVal = bibleRefUtils.sortChapVerseRefs(refA.split(";")[0], refB.split(";")[0]);
     }
-    else{//no a or no b: use default ordering
+    else if((commonPrimaries = alandSynopsis.getCommonPrimaries(a,b)).length){
+        retVal = bibleRefUtils.sortChapVerseRefs(a[gospels.nameAbbrevDict[commonPrimaries[0]]].ref.split(";")[0], 
+        b[gospels.nameAbbrevDict[commonPrimaries[0]]].ref.split(";")[0]);
+    }
+    else if((commonGospels = alandSynopsis.getCommonGospels(a,b)).length){
+        retVal = bibleRefUtils.sortChapVerseRefs(a[gospels.nameAbbrevDict[commonGospels[0]]].ref.split(";")[0], 
+        b[gospels.nameAbbrevDict[commonGospels[0]]].ref.split(";")[0]);
+    }    
+    else if(refA) {//A but no B. Keep/put A first
+        retVal=-1
+
+    }
+    else if(refB){//B but no A. put B first
+        retVal = 1;
+    }
+    else{//no a and no b: use default ordering
         retVal = parseInt(a.pericope) - parseInt(b.pericope);
     }
-    
-      
-    
-   
-    //mylog(logMsg+" -- > " + retVal);
+       
+   // mylog(logMsg+". retval -- > " + retVal,true);
     return retVal;
 }
+
 
 /**
  * 
@@ -308,7 +311,7 @@ export function getAlandPericopeRefs(alandPericopeNum, ignoreOthers=true){
  * @returns {number[]} An array of numbers, each of which is a section (1-18) in  Aland's Synopsis where the verse appears, if at all. 
  * If the verse appears in no such section, returns an empty array.
  */
-export function getAlandSection(refString,sortByGospel=gospels.NONE){
+export function getAlandSection(refString,sortByGospel=''){
     mylog("getAlandSection("+refString+")");
     refString = bibleRefUtils.cleanString(refString);
     const found = alandSynopsis.sections.filter(
@@ -349,9 +352,11 @@ export function getBookName(node){
 
 export {ntBooksDict, alandSynopsis, gospels}
 
-/*export default {
-    getBookName, getAlandSection, getAlandPericopeRefs, getBookChapVerseFromRef, getBookID, getBookAbbrev, getAlandPericopeNumbers, ntBooksDict, alandSynopsis
-}*/
+export default {
+    gospels, getBookName, getAlandSection, getAlandPericopeRefs, 
+    //getBookChapVerseFromRef, 
+    getBookID, getBookAbbrev, getAlandPericopeNumbers, ntBooksDict, alandSynopsis, sortByPrimaryFunc,sortAlandPericopes,
+}
 
 export const testing = {
    // getBookChapVerseFromRef, createNumArrayFromStringListRange, cleanNumString, splitBookChap,sortChapVerseFunc, refIncludes
