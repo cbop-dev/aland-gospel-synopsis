@@ -1,7 +1,8 @@
 import { mylog } from '../env/env.js';
 import * as mathUtils from './math-utils.js';
 /**
- * @description - returns true if one NT reference is contained within another, e.g., refIncludes("Matt 1:1,3-10", "Matt 1:4") and  
+ * @name refIncludes
+ * @description returns true if one NT reference is contained within another, e.g., refIncludes("Matt 1:1,3-10", "Matt 1:4") and  
  *                  refIncludes("Rev", "Rev 2") each return true, because the last parameter is contained in the first;
  *                 but refIncludes("Mark 1", "Mark 2:2"), refIncludes("Luke 1:4", "Luke 1:7"), and  refIncludes("Luke 16", "Mark 16:2")
  *                  each return false, because the later are not contained in the former.

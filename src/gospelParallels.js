@@ -312,6 +312,32 @@ export function getAlandPericopeRefs(alandPericopeNum, ignoreOthers=true){
 }
 
 /**
+ * @description Returns the secondary texts for each gospel of an Aland pericope group.
+ * @param {number} alandPericopeNum 
+ * @returns {string[]} -- array of strings, each of which is an NT/gospels reference
+ */
+export function getAlandPericopeSecondaryRefs(alandPericopeNum){
+
+    const pericope = alandSynopsis.pericopes.find((obj)=>obj.pericope == alandPericopeNum);
+    const refs = [];
+    if (pericope) {
+        for (const gospelAbbrev of ["Matt","Mark","Luke","John"]) {
+            if (pericope[gospelAbbrev].secondary){
+                pericope[gospelAbbrev].secondary.split(";").forEach((theRef)=>{
+                    refs.push(gospelAbbrev.trim()+" "+theRef.trim());
+
+                })
+            }
+        }
+    }
+
+    
+    return refs;
+
+}
+
+
+/**
  * 
  * @param {string} refString  -- a reference to a NT single verse, e.g., "1 Cor 2:11"
  * @param {number} sortByGospel

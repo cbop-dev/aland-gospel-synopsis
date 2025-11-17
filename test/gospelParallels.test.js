@@ -3,6 +3,7 @@ import { mylog } from '../src/lib/env/env.js';
 import { expect, test } from 'vitest';
 import { alandSynopsis } from "../src/alandSections.js";
 import * as MathUtils from "../src/lib/utils/math-utils.js";
+import bibleRefUtils from '../src/lib/utils/bibleRefUtils.js';
 
 function rest(name,func){
     //do nothing;
@@ -71,6 +72,34 @@ test('getBookNameBySyn', async () => {
 });
 
 
+test('getAlandPericopeNumbers', async () => {
+	const alandLookUps =[
+        {ref: "Matt 28:17", alands: [359,364]},
+        //{ref: "Mt 28:17", alands: [359,364]},
+        {ref: "Matt 13:12", alands: [123,125]},
+        {ref: "Matt 14:14", alands: [146]},
+        {ref: "Mark 6:30", alands: [145]},
+        {ref: "1 Pet 4:14", alands: [51,78]},
+        {ref: "Acts 1:13b", alands: [49,99,365]},
+
+    ]
+	
+    for (const lookups of alandLookUps){
+        const foundAlandSects = gPar.getAlandPericopeNumbers(lookups.ref);
+        //mylog("foundalandSects=");
+        //mylog(foundAlandSects);
+        expect(foundAlandSects.length).toEqual(lookups.alands.length);
+        
+        let found = 0;
+        for (const section of lookups.alands){
+            expect(foundAlandSects.includes(section)).toBe(true);
+            found += 1;    
+        }
+        expect(found).toEqual(lookups.alands.length);
+    }
+  //  expect(true).toBe(false);
+	//await expect(page.locator('h1')).toBeVisible();
+});
 
 
 test('getAlandPericopeNumbers', async () => {
@@ -110,6 +139,7 @@ test('getAlandSection', async () => {
         {ref: "Matt 3:15", secs: [3]},
         {ref: "Matt 28:17", secs: [17,18]},
         {ref: "Rom 2:3", secs: [6,7]},
+        
     ]
     for (const t of sectionTests){
         expect(gPar.getAlandSection(t.ref)).toEqual(t.secs);
@@ -119,11 +149,41 @@ test('getAlandSection', async () => {
 });
 
 
+
+test('getAlandPericopeSecondaryRefs', async () => {
+    //{pericope: 194 , title: "Discourses against the Pharisees and Lawyers" , Matt: { ref: "15:1-9" , primary: false, secondary: "22:15; 23:4,6-7,13,23,25-32,34-36" }, Mark: { ref: "7:1-9" , primary: false, secondary:"12:13,38-39" }, Luke: { ref: "11:37-54" , primary: true, secondary: "20:20,46"}, John: { ref: null , primary: false, secondary: "8:6" }, other: { ref: "Acts 7:51-53" }},
+	const tests = [
+        //{per: 16, refs: ["Matt 3:11-12", "Mark 1:7-8", "Luke 3:15-18", "John 1:24-28"]},
+        {per: 194, refs: ["Matt 22:15","Matt 23:4,6-7,13,23,25-32,34-36", "Mark 12:13,38-39", "Luke 20:20,46", "John 8:6"]},
+        
+
+
+    ]
+	
+    for (const test of tests){
+        //mylog("test getAlandPericopeRefs: about to call with pericope input:" + test.per);
+        const foundRefs = gPar.getAlandPericopeSecondaryRefs(test.per);
+       // mylog("foundRefs:["+foundRefs.join("|")+"]", true)
+       // mylog("found Refs:")
+        //mylog(foundRefs);
+        expect(foundRefs.length).toEqual(test.refs.length);
+        //mylog(foundRefs)
+        for (const ref of test.refs){
+        //    mylog("test getAlandPericopeRefs: checking for test ref '" + ref +"' to be in: [" + foundRefs.join(',')+"]:")
+            expect(foundRefs.includes(ref)).toBe(true);
+        }
+    }
+    //expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
+
 test('getAlandPericopeRefs', async () => {
 	const tests = [
         //{per: 16, refs: ["Matt 3:11-12", "Mark 1:7-8", "Luke 3:15-18", "John 1:24-28"]},
         {per: 16, refs: ["Matt 3:11-12", "Mark 1:7-8", "Luke 3:15-18", "John 1:24-28", "Acts 13:24-25"]},
         {per: 255, refs: ["Matt 19:23-30","Mark 10:23-31","Luke 18:24-30","Luke 22:28-30"]},
+        {per: 365, refs: ["Mark 16:15,19","Luke 24:44-53","Acts 1:4-14"]},
 
 
     ]
@@ -133,9 +193,12 @@ test('getAlandPericopeRefs', async () => {
         const foundRefs = gPar.getAlandPericopeRefs(test.per,false);
        // mylog("found Refs:")
         //mylog(foundRefs);
+        
         expect(foundRefs.length).toEqual(test.refs.length);
+
         for (const ref of test.refs){
         //    mylog("test getAlandPericopeRefs: checking for test ref '" + ref +"' to be in: [" + foundRefs.join(',')+"]:")
+            
             expect(foundRefs.includes(ref)).toBe(true);
         }
     }
@@ -274,3 +337,28 @@ test('alandSection filter/sort', () => {
     //expect(alands).toEqual(johnSorted);*/
     expect(true).toBe(true);
 });
+
+test('Primary Refs test', async () => {
+	const primRefsTests=[
+        //5: Luke only; 8. adoration = Matt+Lk, both primary); 10: Matt only; 13: all 4, all primary
+        {input: 309, output: {Luke: "6:40"}},
+        
+   
+    ]   
+
+    for (const t of primRefsTests){
+        
+        const perGroup = gPar.alandSynopsis.lookupPericope(t.input);
+        for (const [book,ref] of Object.entries(t.output)){
+            const booksPrimRefs=perGroup[book].ref;
+           // console.log(`Primary Refs test: checking if per #${t.input} has ${book} with "${ref}" `);
+            //console.log(`booksPrimeRefs of book ${book}: "${booksPrimRefs}"`);
+
+            expect(bibleRefUtils.refIncludes(booksPrimRefs,ref)).toBe(true);
+            //expect(book + " " + ref)
+        }
+    }
+	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
+
