@@ -323,7 +323,7 @@ export function getAlandPericopeSecondaryRefs(alandPericopeNum){
     if (pericope) {
         for (const gospelAbbrev of ["Matt","Mark","Luke","John"]) {
             if (pericope[gospelAbbrev].secondary){
-                pericope[gospelAbbrev].secondary.split(";").forEach((theRef)=>{
+                pericope[gospelAbbrev].secondary.split(";").filter((s)=>s.trim()).forEach((theRef)=>{
                     refs.push(gospelAbbrev.trim()+" "+theRef.trim());
 
                 })

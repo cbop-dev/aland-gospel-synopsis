@@ -362,3 +362,23 @@ test('Primary Refs test', async () => {
 	//await expect(page.locator('h1')).toBeVisible();
 });
 
+
+test('secondary parallels test', async () => {
+	const secRefsTests=[
+        //5: Luke only; 8. adoration = Matt+Lk, both primary); 10: Matt only; 13: all 4, all primary
+        {input: 367, output: {Matt: "26:30-35; 16:28", Mark: "14:26-31; 9:1",Luke: "22:39,21-34; 9:27",John: "18:1; 16:32; 13:36-38; 8:51-52"}},
+         {input: 32, output: {Matt: "13:57; 3:1-2;", Mark: "6:4; 1:4,21",Luke: "4:24,31; 3:2-3",John: "2:12"}},
+        
+   
+    ]   
+
+    for (const t of secRefsTests){
+        const ret = gPar.getAlandPericopeSecondaryRefs(t.input);
+        const correctOutput= Object.entries(t.output).map(([b,ref])=>ref.split(";").filter((s)=>s).map((ref2)=>b.trim()+ " "+ref2.trim())).flat();
+        console.log(`secondary parallels of #${t.input}=['${ret.join("','")}']`)
+        expect(ret).toEqual(correctOutput);
+      
+    }
+	expect(true).toBe(true);
+	//await expect(page.locator('h1')).toBeVisible();
+});
